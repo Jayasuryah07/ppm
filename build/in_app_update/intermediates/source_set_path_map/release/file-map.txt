@@ -1,0 +1,14 @@
+de.ffuf.in_app_update-jetified-window-1.0.0-beta04-0 /Users/user/.gradle/caches/transforms-3/606313fdb1cae9e0315f384bba622de9/transformed/jetified-window-1.0.0-beta04/res
+de.ffuf.in_app_update-jetified-core-common-2.0.3-1 /Users/user/.gradle/caches/transforms-3/8b3595ca60dedf1b33657e32a6278359/transformed/jetified-core-common-2.0.3/res
+de.ffuf.in_app_update-jetified-window-java-1.0.0-beta04-2 /Users/user/.gradle/caches/transforms-3/c9db4d4d9f8f4c2cafb66dbeef3eb0a4/transformed/jetified-window-java-1.0.0-beta04/res
+de.ffuf.in_app_update-jetified-play-services-basement-18.1.0-3 /Users/user/.gradle/caches/transforms-3/ed02a2a3834d59919ee6cf6bec6e2a75/transformed/jetified-play-services-basement-18.1.0/res
+de.ffuf.in_app_update-jetified-annotation-experimental-1.1.0-4 /Users/user/.gradle/caches/transforms-3/fde2474475eab15cab69e8043d98ec84/transformed/jetified-annotation-experimental-1.1.0/res
+de.ffuf.in_app_update-core-1.6.0-5 /Users/user/.gradle/caches/transforms-3/ffd32d531bbe851a17a010fa94e8c658/transformed/core-1.6.0/res
+de.ffuf.in_app_update-main-6 /Users/user/.pub-cache/hosted/pub.dev/in_app_update-4.2.3/android/src/main/res
+de.ffuf.in_app_update-release-7 /Users/user/.pub-cache/hosted/pub.dev/in_app_update-4.2.3/android/src/release/res
+de.ffuf.in_app_update-pngs-8 /Users/user/StudioProjects/projects/pp_milan/build/in_app_update/generated/res/pngs/release
+de.ffuf.in_app_update-resValues-9 /Users/user/StudioProjects/projects/pp_milan/build/in_app_update/generated/res/resValues/release
+de.ffuf.in_app_update-rs-10 /Users/user/StudioProjects/projects/pp_milan/build/in_app_update/generated/res/rs/release
+de.ffuf.in_app_update-mergeReleaseResources-11 /Users/user/StudioProjects/projects/pp_milan/build/in_app_update/intermediates/incremental/release/mergeReleaseResources/merged.dir
+de.ffuf.in_app_update-mergeReleaseResources-12 /Users/user/StudioProjects/projects/pp_milan/build/in_app_update/intermediates/incremental/release/mergeReleaseResources/stripped.dir
+de.ffuf.in_app_update-merged_res-13 /Users/user/StudioProjects/projects/pp_milan/build/in_app_update/intermediates/merged_res/release

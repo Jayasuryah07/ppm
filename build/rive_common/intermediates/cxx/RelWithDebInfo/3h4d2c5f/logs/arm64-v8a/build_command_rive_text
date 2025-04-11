@@ -1,0 +1,4 @@
+/Users/user/Library/Android/sdk/cmake/3.18.1/bin/ninja \
+  -C \
+  /Users/user/.pub-cache/hosted/pub.dev/rive_common-0.4.15/android/.cxx/RelWithDebInfo/3h4d2c5f/arm64-v8a \
+  rive_text

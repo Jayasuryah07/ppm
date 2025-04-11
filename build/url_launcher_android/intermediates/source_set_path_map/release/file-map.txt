@@ -1,0 +1,14 @@
+io.flutter.plugins.urllauncher.url_launcher_android-lifecycle-runtime-2.3.1-0 /Users/user/.gradle/caches/transforms-3/59996dc83b6bc540ee7434b3838a1f57/transformed/lifecycle-runtime-2.3.1/res
+io.flutter.plugins.urllauncher.url_launcher_android-jetified-window-1.0.0-beta04-1 /Users/user/.gradle/caches/transforms-3/606313fdb1cae9e0315f384bba622de9/transformed/jetified-window-1.0.0-beta04/res
+io.flutter.plugins.urllauncher.url_launcher_android-jetified-annotation-experimental-1.3.0-2 /Users/user/.gradle/caches/transforms-3/8c37564d9f17c2618bdf35089a5075d7/transformed/jetified-annotation-experimental-1.3.0/res
+io.flutter.plugins.urllauncher.url_launcher_android-browser-1.5.0-3 /Users/user/.gradle/caches/transforms-3/984eaabd1514a71bb063cc1470c0323f/transformed/browser-1.5.0/res
+io.flutter.plugins.urllauncher.url_launcher_android-jetified-window-java-1.0.0-beta04-4 /Users/user/.gradle/caches/transforms-3/c9db4d4d9f8f4c2cafb66dbeef3eb0a4/transformed/jetified-window-java-1.0.0-beta04/res
+io.flutter.plugins.urllauncher.url_launcher_android-core-1.10.1-5 /Users/user/.gradle/caches/transforms-3/fb4ac8abedc751e91f0fc3c522e5ef9d/transformed/core-1.10.1/res
+io.flutter.plugins.urllauncher.url_launcher_android-main-6 /Users/user/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.2/android/src/main/res
+io.flutter.plugins.urllauncher.url_launcher_android-release-7 /Users/user/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.2/android/src/release/res
+io.flutter.plugins.urllauncher.url_launcher_android-pngs-8 /Users/user/StudioProjects/projects/pp_milan/build/url_launcher_android/generated/res/pngs/release
+io.flutter.plugins.urllauncher.url_launcher_android-resValues-9 /Users/user/StudioProjects/projects/pp_milan/build/url_launcher_android/generated/res/resValues/release
+io.flutter.plugins.urllauncher.url_launcher_android-rs-10 /Users/user/StudioProjects/projects/pp_milan/build/url_launcher_android/generated/res/rs/release
+io.flutter.plugins.urllauncher.url_launcher_android-mergeReleaseResources-11 /Users/user/StudioProjects/projects/pp_milan/build/url_launcher_android/intermediates/incremental/release/mergeReleaseResources/merged.dir
+io.flutter.plugins.urllauncher.url_launcher_android-mergeReleaseResources-12 /Users/user/StudioProjects/projects/pp_milan/build/url_launcher_android/intermediates/incremental/release/mergeReleaseResources/stripped.dir
+io.flutter.plugins.urllauncher.url_launcher_android-merged_res-13 /Users/user/StudioProjects/projects/pp_milan/build/url_launcher_android/intermediates/merged_res/release

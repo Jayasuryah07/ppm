@@ -1,0 +1,12 @@
+app.rive.rive.rive_common-jetified-window-1.0.0-beta04-0 /Users/user/.gradle/caches/transforms-3/606313fdb1cae9e0315f384bba622de9/transformed/jetified-window-1.0.0-beta04/res
+app.rive.rive.rive_common-jetified-window-java-1.0.0-beta04-1 /Users/user/.gradle/caches/transforms-3/c9db4d4d9f8f4c2cafb66dbeef3eb0a4/transformed/jetified-window-java-1.0.0-beta04/res
+app.rive.rive.rive_common-jetified-annotation-experimental-1.1.0-2 /Users/user/.gradle/caches/transforms-3/fde2474475eab15cab69e8043d98ec84/transformed/jetified-annotation-experimental-1.1.0/res
+app.rive.rive.rive_common-core-1.6.0-3 /Users/user/.gradle/caches/transforms-3/ffd32d531bbe851a17a010fa94e8c658/transformed/core-1.6.0/res
+app.rive.rive.rive_common-main-4 /Users/user/.pub-cache/hosted/pub.dev/rive_common-0.4.15/android/src/main/res
+app.rive.rive.rive_common-release-5 /Users/user/.pub-cache/hosted/pub.dev/rive_common-0.4.15/android/src/release/res
+app.rive.rive.rive_common-pngs-6 /Users/user/StudioProjects/projects/pp_milan/build/rive_common/generated/res/pngs/release
+app.rive.rive.rive_common-resValues-7 /Users/user/StudioProjects/projects/pp_milan/build/rive_common/generated/res/resValues/release
+app.rive.rive.rive_common-rs-8 /Users/user/StudioProjects/projects/pp_milan/build/rive_common/generated/res/rs/release
+app.rive.rive.rive_common-mergeReleaseResources-9 /Users/user/StudioProjects/projects/pp_milan/build/rive_common/intermediates/incremental/release/mergeReleaseResources/merged.dir
+app.rive.rive.rive_common-mergeReleaseResources-10 /Users/user/StudioProjects/projects/pp_milan/build/rive_common/intermediates/incremental/release/mergeReleaseResources/stripped.dir
+app.rive.rive.rive_common-merged_res-11 /Users/user/StudioProjects/projects/pp_milan/build/rive_common/intermediates/merged_res/release
