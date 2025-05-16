@@ -17,13 +17,14 @@ class ConstHelper {
 
   static TextStyle appBarTextStyle = TextStyle(
     color: ConstHelper.whiteColor,
-    fontSize: 16,
+    fontSize: Get.width * 0.045,
     fontWeight: FontWeight.bold,
   );
   static Color whiteColor = Colors.white;
   static Color blackColor = Colors.black;
   static Color greyColor = Colors.grey;
   static Color orangeColor = const Color(0xFFF55C47);
+  static Color orangeDarkColor = const Color(0xFFBD483C);
   static Color cementColor = const Color(0xFFA7AEB5);
   static Color darkRedColor = const Color(0xFF820815);
   static Color lightBlackColor = const Color(0xFF3A3838);
@@ -126,7 +127,11 @@ class ConstHelper {
     }
   }
 
-  void areYouSureWantAlertDialog({required String title,required String description, required void Function() onPressed,}) {
+  void areYouSureWantAlertDialog({
+    required String title,
+    required String description,
+    required void Function() onPressed,
+  }) {
     showDialog(
       context: navigatorKey.currentContext!,
       barrierDismissible: false,
@@ -138,32 +143,77 @@ class ConstHelper {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(title,style: TextStyle(color: orangeColor,fontSize: 16,fontWeight: FontWeight.w600,),),
-                Text(description,style: TextStyle(color: orangeColor.withOpacity(0.6),fontSize: 13,),),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        title.toUpperCase(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: ConstHelper.orangeDarkColor,
+                          fontSize: Get.width * 0.05,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: Get.height * 0.015,
+                ),
+                Text(
+                  description,
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                    color: ConstHelper.blackColor,
+                    fontSize: Get.width * 0.04,
+                      letterSpacing: 1
+                  ),
+                ),
               ],
             ),
             actions: [
-              ElevatedButton(
-                onPressed: (){
-                  Get.back();
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: whiteColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6)
-                    )
-                ),
-                child: Text(noMsg,style: TextStyle(color: orangeColor,),),
-              ),
-              ElevatedButton(
-                onPressed: onPressed,
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: orangeColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6)
-                    )
-                ),
-                child: Text(yesMsg,style: TextStyle(color: whiteColor,),),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: whiteColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6))),
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                          color: orangeColor,
+                            letterSpacing: 1
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: onPressed,
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: orangeColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6))),
+                      child: Text(
+                        "Confirm",
+                        style: TextStyle(
+                          color: whiteColor,
+                            letterSpacing: 1
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -171,7 +221,6 @@ class ConstHelper {
       },
     );
   }
-
   void showNetworkImageInDialog({required String imgPath,}) {
     showDialog(
       context: navigatorKey.currentContext!,

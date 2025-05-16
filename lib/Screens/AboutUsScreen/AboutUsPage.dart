@@ -23,9 +23,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("About Us", style: TextStyle(fontSize: 20,
-            color: ConstHelper.blackColor,
-            fontWeight: FontWeight.bold,),),
+          title: Text("About Us",style: TextStyle(fontSize: Get.width*0.05,letterSpacing:1,color: ConstHelper.blackColor,fontWeight: FontWeight.bold,),),
           leading: IconButton(
             onPressed: () {
               Get.back();
@@ -75,15 +73,17 @@ class _AboutUsPageState extends State<AboutUsPage> {
                   color: ConstHelper.orangeColor,
                   fontSize: Get.height / 45,
                   fontWeight: FontWeight.w500,
+                    letterSpacing: 1
                 ),
               ),
               Text(
-                "Tag line here",
+                "Find love, the smart way – with PPMilan.",
                 textAlign: TextAlign.start,
                 style: TextStyle(
                   color: ConstHelper.blackColor,
                   fontSize: Get.height / 60,
                   fontWeight: FontWeight.w400,
+                  letterSpacing: 1
                 ),
               ),
               SizedBox(
@@ -94,12 +94,48 @@ class _AboutUsPageState extends State<AboutUsPage> {
                 imageIconData: Icons.call_rounded,
                 isIcon: true,
                 context: context,
+                onTap: () async {
+                  // Extract and validate the phone number
+                  final String? contactNumber =
+                     "8867171060";
+
+                  if (contactNumber != null && contactNumber.isNotEmpty) {
+                    // Trim whitespace and ensure the number is in the correct format
+                    final String formattedNumber =
+                    contactNumber.replaceAll(RegExp(r'\s+'), '');
+                    final Uri uri = Uri.parse('tel:$formattedNumber');
+
+                    // Check if the dial pad can be launched
+                    await launchUrl(
+                    uri,
+                    mode: LaunchMode
+                        .externalApplication, // Ensures it opens in a browser like Chrome
+                    );
+                  }
+                },
               ),
               commonAboutUsWidget(
                 title: "info@ppmilan.in",
                 imageIconData: Icons.email_outlined,
                 isIcon: true,
                 context: context,
+                onTap: () async {
+                  // Define the email details
+                  final String recipient =
+                     "info@ppmilan.in";
+                  final String subject = Uri.encodeComponent("PP Milan mail");
+
+                  // Create the mailto URI
+                  final Uri uri =
+                  Uri.parse('mailto:$recipient?subject=$subject');
+
+                  // Check if the email client can be launched
+                  await launchUrl(
+                  uri,
+                  mode: LaunchMode
+                      .externalApplication, // Ensures it opens in a browser like Chrome
+                  );
+                },
               ),
               commonAboutUsWidget(
                 title: "www.ppmilan.in",
@@ -108,7 +144,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
                 context: context,
               ),
               commonAboutUsWidget(
-                title: "www.google.com",
+                title: "Bangalore",
                 imageIconData: Icons.location_on_outlined,
                 isIcon: true,
                 context: context,
@@ -231,45 +267,49 @@ class _AboutUsPageState extends State<AboutUsPage> {
   }
 
   Widget commonAboutUsWidget({bool isIcon = false,
+    void Function()? onTap,
     String? title,
     dynamic imageIconData,
     BuildContext? context}) {
     return Padding(
       padding:
       EdgeInsets.symmetric(vertical: Get.height * 0.01),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            flex: 2,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                !isIcon
-                    ? Image.asset(imageIconData)
-                    : Icon(
-                  imageIconData,
-                  color: ConstHelper.orangeColor,
-                  size: Get.height * 0.045,
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            width: Get.width * 0.04,
-          ),
-          Expanded(
-            flex: 4,
-            child: Text(
-              title ?? "",
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                color: ConstHelper.blackColor,
-                fontSize: 15,
+      child: InkWell(
+        onTap: onTap,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  !isIcon
+                      ? Image.asset(imageIconData)
+                      : Icon(
+                    imageIconData,
+                    color: ConstHelper.orangeColor,
+                    size: Get.height * 0.045,
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            SizedBox(
+              width: Get.width * 0.04,
+            ),
+            Expanded(
+              flex: 4,
+              child: Text(
+                title ?? "",
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  color: ConstHelper.blackColor,
+                  fontSize: Get.width * 0.04,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

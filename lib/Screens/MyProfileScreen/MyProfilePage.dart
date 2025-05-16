@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -5,8 +8,85 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../Controllers/HomeController.dart';
 
+import '../../Utils/ApiHelper.dart';
 import '../../Utils/ConstHelper.dart';
+import '../../Utils/SharedPrefHelper.dart';
+import '../HomeScreen/MembersDataShowPage.dart';
+import '../LoginScreen/LoginPage.dart';
 import 'EditProfilePage.dart';
+
+Widget threeDotWidget() => Padding(
+  padding: EdgeInsets.only(
+    right: Get.width / 30,
+    left: Get.width / 90,
+  ),
+  child: Text(
+    ':',
+    style: titleTextStyle,
+  ),
+);
+TextStyle headingTextStyle = TextStyle(
+    color: ConstHelper.blackColor,
+    fontWeight: FontWeight.w600,
+    fontSize: Get.width * 0.045,
+    letterSpacing: 1);
+
+TextStyle titleTextStyle = TextStyle(
+  color: ConstHelper.blackColor,
+  fontSize: Get.width * 0.04,
+  fontWeight: FontWeight.w500,
+);
+
+TextStyle valueTextStyle = TextStyle(
+  color: ConstHelper.orangeColor,
+  fontSize: Get.width * 0.04,
+  fontWeight: FontWeight.w500,
+);
+
+class InfoRow extends StatelessWidget {
+  final String title;
+  final String? value;
+  final TextStyle titleStyle;
+  final TextStyle valueStyle;
+  final String? suffix;
+  final bool? isTrue;
+
+  const InfoRow({
+    required this.title,
+    required this.value,
+    required this.titleStyle,
+    required this.valueStyle,
+    this.suffix,
+    super.key,
+    this.isTrue,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: Get.width / 90),
+      child: Row(
+        children: [
+          Expanded(
+              child: Text(title.trim().isEmpty ? " - - - -" : title,
+                  style: titleStyle)),
+          isTrue != null && isTrue == true
+              ? const SizedBox()
+              : threeDotWidget(),
+          if (suffix != null) Text(suffix!, style: valueStyle),
+          isTrue != null && isTrue == true
+              ? const SizedBox()
+              : Expanded(
+            child: Text(
+              value?.trim().isEmpty ?? true ? "N/A" : value!,
+              style: valueStyle,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({super.key});
@@ -24,7 +104,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("My Profile",style: TextStyle(fontSize: 20,color: ConstHelper.blackColor,fontWeight: FontWeight.bold,),),
+          title: Text("My Profile",style: TextStyle(fontSize: Get.width*0.05,letterSpacing:1,color: ConstHelper.blackColor,fontWeight: FontWeight.bold,),),
           leading: IconButton(
             onPressed: (){
               Get.back();
@@ -108,7 +188,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     style: TextStyle(
                       color: ConstHelper.blackColor,
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                      fontSize: Get.width * 0.055,
                     ),
                   ),
                 ),
@@ -122,15 +202,15 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               style: TextStyle(
                                 color: ConstHelper.blackColor,
                                 fontWeight: FontWeight.w500,
-                                fontSize: 14,
+                                fontSize: Get.width * 0.04,
                               ),
                             ),
                             TextSpan(
                               text: homeController.userData.value.id == null || homeController.userData.value.id == 0 ? ConstHelper.naMsg : homeController.userData.value.id!.toString(),
                               style: TextStyle(
-                                color: ConstHelper.orangeColor,
+                                color: ConstHelper.blackColor,
                                 fontWeight: FontWeight.w500,
-                                fontSize: 14,
+                                fontSize: Get.width * 0.04,
                               ),
                             ),
                           ]
@@ -155,7 +235,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/20,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                     crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -174,11 +254,11 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                     crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
-                            'Date of Time',
+                            'Time of Birth',
                             style: titleTextStyle,
                           ),
                         ),
@@ -193,7 +273,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -212,7 +292,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                     crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -223,7 +303,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                         threeDotWidget(),
                         Expanded(
                           child: Text(
-                            homeController.userData.value.profileHeight == null || homeController.userData.value.profileHeight!.trim().isEmpty ? ConstHelper.naMsg : '${homeController.userData.value.profileHeight![0]} ft ${homeController.userData.value.profileHeight!.substring(1)} Inch',
+                              convertInchesToFeetInch(int.parse(homeController.userData.value.profileHeight?.toString()??"0")),
                             style: valueTextStyle,
                           ),
                         ),
@@ -231,7 +311,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -250,7 +330,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -269,7 +349,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -288,11 +368,11 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
-                            'Whatsapp No',
+                            'WhatsApp No',
                             style: titleTextStyle,
                           ),
                         ),
@@ -307,7 +387,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -326,7 +406,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -392,7 +472,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/20,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -411,7 +491,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -506,7 +586,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/20,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -525,7 +605,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -544,7 +624,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -563,7 +643,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -582,7 +662,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -601,7 +681,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                     crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -639,7 +719,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/20,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                     crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -658,7 +738,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                     SizedBox(height: Get.width/90,),
                     Row(
-                      // crossAxisAlignment: CrossAxisAlignment.start,
+                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -679,30 +759,112 @@ class _MyProfilePageState extends State<MyProfilePage> {
                   ],
                 ),
                 SizedBox(height: Get.width/30,),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: Get.width/8,),
-                  child: InkWell(
-                    onTap: () {
-                      Get.to(Editprofilepage());
-                    },
-                    child: Container(
-                      width: Get.width,
-                      decoration: BoxDecoration(
-                        color: ConstHelper.orangeColor,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(vertical: Get.width/30,),
-                      child: Text(
-                        'Edit Profile',
-                        style: TextStyle(
-                          color: ConstHelper.whiteColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                Row(
+                  children: [
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          Get.to(Editprofilepage());
+                        },
+                        child: Container(
+                          width: Get.width,
+                          decoration: BoxDecoration(
+                            color: ConstHelper.orangeColor,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.symmetric(
+                            vertical: Get.width / 30,
+                          ),
+                          child: Text(
+                            'Edit Profile',
+                            style: TextStyle(
+                              color: ConstHelper.whiteColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: Get.width * 0.045,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                    SizedBox(
+                      width: Get.width * 0.01,
+                    ),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () async {
+                          deleteDialog(
+                            context,
+                            Get.height,
+                            Get.width,
+                                () async {
+                              await ApiHelper.apiHelper
+                                  .postDeleteProfileApi()
+                                  .then((value) async {
+                                try {
+                                  if (value.isNotEmpty) {
+                                    if (value['code'] == 200) {
+                                      final responseData = value;
+                                      debugPrint(responseData.toString());
+                                      if (responseData['code'] == 200) {
+                                        SharedPrefHelper.sharedPreferences
+                                            .setBool(
+                                          'login',
+                                          false,
+                                        );
+                                        ConstHelper.successDialog(
+                                          text: value['msg'] ??
+                                              "Profile deleted successfully",
+                                          seconds: 2,
+                                        );
+                                        Get.back();
+                                        Future.delayed(
+                                          const Duration(seconds: 1),
+                                              () {
+                                            return Get.offAll(
+                                              const LoginPage(),
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        ConstHelper.errorDialog(
+                                          text: value['msg'] ??
+                                             "Something went wrong",
+                                          seconds: 3,
+                                        );
+                                      }
+                                    } else {
+                                      ConstHelper.errorDialog(
+                                        text: value['msg'] ??
+                                            "Something went wrong",
+                                        seconds: 3,
+                                      );
+                                    }
+                                  }
+                                } on TimeoutException catch (e) {
+                                  ConstHelper.errorDialog(
+                                    text: e.message.toString(),
+                                    seconds: 3,
+                                  );
+                                }
+                              });
+                            },
+                          );
+                        },
+                        child: Text(
+                          "Delete Account".toUpperCase(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: Get.height / 50,
+                            decoration: TextDecoration.underline,
+                            color: ConstHelper.orangeColor,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: Get.width/20,),
               ],
@@ -712,25 +874,109 @@ class _MyProfilePageState extends State<MyProfilePage> {
       ),
     );
   }
-
+  deleteDialog(
+      context, double height, double width, void Function()? onPressed) {
+    return showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: ConstHelper.whiteColor,
+        surfaceTintColor: ConstHelper.whiteColor,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+        child: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: height * 0.02),
+                Text(
+                  "Delete Profile?".toUpperCase(),
+                  style: TextStyle(
+                    fontSize: Get.width * 0.045,
+                    fontWeight: FontWeight.w600,
+                    color: ConstHelper.orangeColor,
+                    letterSpacing: 1,
+                  ),
+                ),
+                SizedBox(height: height * 0.02),
+                Text(
+                  "Are you sure you want to delete your account? This will permanently erase your account.",
+                  textAlign: TextAlign.justify,
+                  style: TextStyle(
+                    fontSize: Get.width * 0.04,
+                    fontWeight: FontWeight.w400,
+                    color: ConstHelper.blackColor,
+                    letterSpacing: 1,
+                    height: 1.5,
+                  ),
+                ),
+                SizedBox(height: height * 0.03),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: onPressed,
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: ConstHelper.orangeColor),
+                        child: Text(
+                          "Confirm",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: Get.height / 60,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: Get.width * 0.04,
+                    ),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () => Get.back(),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white),
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                            color: ConstHelper.orangeColor,
+                            fontSize: Get.height / 60,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: height * 0.02),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   TextStyle headingTextStyle = TextStyle(
-    color: ConstHelper.blackColor,
-    fontWeight: FontWeight.w600,
-    fontSize: 14,
-  );
+      color: ConstHelper.blackColor,
+      fontWeight: FontWeight.w600,
+      fontSize: Get.width * 0.045,
+      letterSpacing: 1);
 
   TextStyle titleTextStyle = TextStyle(
     color: ConstHelper.blackColor,
-    fontSize: 12,
+    fontSize: Get.width * 0.04,
     fontWeight: FontWeight.w500,
   );
 
   TextStyle valueTextStyle = TextStyle(
-    color: ConstHelper.cementColor,
-    fontSize: 12,
+    color: ConstHelper.orangeColor,
+    fontSize: Get.width * 0.04,
     fontWeight: FontWeight.w500,
   );
+
 
   Widget threeDotWidget() => Padding(
     padding: EdgeInsets.only(right: Get.width/30,left: Get.width/90,),

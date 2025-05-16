@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart' as getX;
 import 'package:intl/intl.dart';
 
@@ -35,6 +36,7 @@ class ApiHelper {
       );
       if (response.statusCode == 200) {
         var data = response.data;
+        print(data);
         return data == null ? [] : data['data'] ?? [];
       } else {
         return [];
@@ -143,6 +145,32 @@ class ApiHelper {
     }
   }
 
+  Future postDeleteProfileApi() async {
+    try {
+      var headers = {
+        'Authorization': 'Bearer $authorizationToken',
+      };
+      Response response = await api.dio.post(
+        'delete-account',
+        options: Options(
+          headers: headers,
+        ),
+      );
+      var data = response.data;
+      if (response.statusCode == 200) {
+
+        debugPrint(data.toString());
+        print('asdadasd ${data.runtimeType} ${data['data'].runtimeType}');
+
+        return data;
+      } else {
+        return data;
+      }
+    } catch (error) {
+      debugPrint(error.toString());
+      return {};
+    }
+  }
 
   Future<String> editProfile({required String whatsapp,
     required String working_city,

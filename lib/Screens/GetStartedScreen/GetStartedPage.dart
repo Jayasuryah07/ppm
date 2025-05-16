@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
@@ -17,13 +18,6 @@ import '../../Utils/ConstHelper.dart';
 import '../../Utils/FirebaseHelper.dart';
 
 import '../../Utils/SharedPrefHelper.dart';
-
-
-
-
-
-
-
 
 class GetStartedPage extends StatefulWidget {
   const GetStartedPage({super.key});
@@ -58,8 +52,37 @@ class _GetStartedPageState extends State<GetStartedPage> {
       print("Error during update: $e");
     }
   }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    /*SharedPrefHelper.sharedPreferences.setBool(
+      'login',
+      true,
+    );
+    bool login = SharedPrefHelper.sharedPreferences.getBool('login') ?? false;
+    print(login);*/
+    Timer(const Duration(seconds: 3,),() async {
+      bool login = SharedPrefHelper.sharedPreferences.getBool('login') ?? false;
+      try{
+        if(login){
+        await homeController.getUserData();
+        EasyLoading.dismiss();
+        Get.off(()=>const HomePage(),);
+
+      }else{
+        EasyLoading.dismiss();
+        Get.off(()=>const LoginPage(),);
+      }}catch(e){
+        EasyLoading.dismiss();
+        Get.off(()=>const LoginPage(),);
+      }
+    },);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: ConstHelper.whiteColor,
@@ -249,30 +272,32 @@ class _GetStartedPageState extends State<GetStartedPage> {
                     ],
                   ),
                 ),
-                SizedBox(height: Get.width/5,),
+                SizedBox(height: Get.height*0.01,),
                 Center(
                   child: Text(
-                    "Matrimonial app for searching bride and groom",
+                    "Your Perfect Match Awaits – Join PPMilan Today!".toUpperCase(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: ConstHelper.blackColor,
+                      color: ConstHelper.orangeColor,
                       fontWeight: FontWeight.bold,
-                      fontSize: 25,
+                      fontSize: Get.width*0.06,
+                      letterSpacing: 1
                     ),
                   ),
                 ),
                 SizedBox(height: Get.width/20,),
                 Center(
                   child: Text(
-                    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's",
+                    "Love made easy! Smart matchmaking, verified profiles—find ‘The One’ with PPMilan!",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: ConstHelper.cementColor,
-                      fontSize: 12,
+                      color: ConstHelper.blackColor.withOpacity(0.8),
+                        fontSize: Get.width*0.05,
+                        letterSpacing: 1
                     ),
                   ),
                 ),
-                SizedBox(height: Get.width/20,),
+                SizedBox(height: Get.height*0.07,),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: Get.width/8,),
                   child: GestureDetector(
@@ -286,84 +311,18 @@ class _GetStartedPageState extends State<GetStartedPage> {
                       }
                       else
                       {
-
                         bool login = SharedPrefHelper.sharedPreferences.getBool('login') ?? false;
                         try {
                           homeController.firebaseFCMToken.value = await FirebaseHelper.firebaseHelper.getFirebaseToken();
-                          if(login)
-                          {
-                            await homeController.getUserData();
-                            await ApiHelper.apiHelper.loginUser(profileId: (homeController.userDataWithToken.value.user == null ? '0' : homeController.userDataWithToken.value.user?.profileDeviceId ?? '0'), password: (homeController.userDataWithToken.value.user == null ? '0' : homeController.userDataWithToken.value.user?.profileCpassword ?? '0'), deviceId: homeController.firebaseFCMToken.value.substring(0,50),).then((userData) async {
-                              if(userData.isNotEmpty)
-                              {
-                                print("user data ::::::: $userData ");
-                                if(userData['code'] == 200)
-                                {
-                                  UserDataModel userDataModel = UserDataModel.fromJson(userData['data'] ?? {});
-                                  SharedPrefHelper.sharedPreferences.setString('userData', jsonEncode(userDataModel),);
-                                  await homeController.getUserData();
-                                  EasyLoading.dismiss();
-                                  Get.off(()=>const HomePage(),);
-                                }
-                                else
-                                {
-                                  EasyLoading.dismiss();
-                                  Get.back();
-                                  SharedPrefHelper.sharedPreferences.setBool(
-                                    'login',
-                                    false,
-                                  );
-                                  Get.off(()=>const LoginPage(),);
-                                }
-                              }
-                              else
-                              {
-                                EasyLoading.dismiss();
-                                Get.off(()=>const HomePage(),);
-                              }
-                            },);
-                            // await homeController.getUserData().then((value) async {
-                            //   if(homeController.firebaseFCMToken.value.substring(0,50) == (homeController.userDataWithToken.value.user == null ? '' : homeController.userDataWithToken.value.user?.profileDeviceId))
-                            //   {
-                            //     EasyLoading.dismiss();
-                            //     Get.off(const HomePage(),);
-                            //   }
-                            //   else if(homeController.firebaseFCMToken.trim().isNotEmpty) {
-                            //     await ApiHelper.apiHelper.loginUser(profileId: (homeController.userDataWithToken.value.user == null ? '0' : homeController.userDataWithToken.value.user?.profileDeviceId ?? '0'), password: (homeController.userDataWithToken.value.user == null ? '0' : homeController.userDataWithToken.value.user?.profileCpassword ?? '0'), deviceId: homeController.firebaseFCMToken.value.substring(0,50),).then((userData) {
-                            //       if(userData.isNotEmpty)
-                            //       {
-                            //         if(userData['code'] == 200)
-                            //         {
-                            //           UserDataModel userDataModel = UserDataModel.fromJson(userData['data'] ?? {});
-                            //           SharedPrefHelper.sharedPreferences.setString('userData', jsonEncode(userDataModel),);
-                            //           EasyLoading.dismiss();
-                            //           Get.off(const HomePage(),);
-                            //         }
-                            //         else
-                            //         {
-                            //           EasyLoading.dismiss();
-                            //           Get.off(const HomePage(),);
-                            //         }
-                            //       }
-                            //       else
-                            //       {
-                            //         EasyLoading.dismiss();
-                            //         Get.off(const HomePage(),);
-                            //       }
-                            //     },);
-                            //   }
-                            //   else
-                            //   {
-                            //     EasyLoading.dismiss();
-                            //     Get.off(const HomePage(),);
-                            //   }
-                            // },);
-                          }
-                          else
-                          {
-                            EasyLoading.dismiss();
-                            Get.off(()=>const LoginPage(),);
-                          }
+                            if(login){
+                              await homeController.getUserData();
+                              EasyLoading.dismiss();
+                              Get.off(()=>const HomePage(),);
+
+                            }else{
+                              EasyLoading.dismiss();
+                              Get.off(()=>const LoginPage(),);
+                            }
                         } catch(error) {
                           if(login)
                             {
@@ -388,11 +347,11 @@ class _GetStartedPageState extends State<GetStartedPage> {
                       alignment: Alignment.center,
                       padding: EdgeInsets.symmetric(vertical: Get.width/30,),
                       child: Text(
-                        'Get Started',
+                        'Find Your Forever',
                         style: TextStyle(
                           color: ConstHelper.whiteColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                          fontSize: Get.width*0.05,
                         ),
                       ),
                     ),

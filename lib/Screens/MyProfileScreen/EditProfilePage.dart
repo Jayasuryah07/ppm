@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,6 +14,75 @@ import '../../Controllers/HomeController.dart';
 import '../../Utils/ApiHelper.dart';
 import '../../Utils/ConstHelper.dart';
 import '../../Utils/PhotoViewPage.dart';
+import '../HomeScreen/MembersDataShowPage.dart';
+String normalizeTime(String input) {
+  try {
+    // Split input by space to separate time and period (AM/PM)
+    final parts = input.trim().split(' ');
+    if (parts.length != 2) throw FormatException('Invalid format');
+
+    final timeParts = parts[0].split(':');
+    if (timeParts.length != 2) throw FormatException('Invalid time');
+
+    final hour = timeParts[0].padLeft(2, '0');
+    final minute = timeParts[1].padLeft(2, '0');
+    final period = parts[1].toUpperCase();
+
+    final normalized = '$hour:$minute $period';
+    final parsed = DateFormat('hh:mm a').parse(normalized);
+    return DateFormat('hh:mm a').format(parsed);
+  } catch (e) {
+    return 'Invalid Time';
+  }
+}
+
+String convertTo12HourFormat(String time24) {
+  // Parse the 24-hour format time string into a DateTime object
+  final DateFormat inputFormat = DateFormat("HH:mm");
+  final DateTime dateTime = inputFormat.parse(time24);
+
+  // Format the DateTime object into 12-hour format with AM/PM
+  final DateFormat outputFormat = DateFormat("hh:mm a");
+  return outputFormat.format(dateTime);
+}
+class CommonTextField extends StatelessWidget {
+  final String label;
+  final String subLabel;
+  final TextStyle? textStyle;
+
+  const CommonTextField({
+    super.key,
+    required this.label,
+    required this.subLabel,
+    this.textStyle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          textAlign: TextAlign.start,
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+            fontSize: Get.width * 0.04,
+          ),
+        ),
+        Text(
+          subLabel,
+          style: textStyle ??
+              TextStyle(
+                color: Colors.black,
+                fontSize: Get.width * 0.035,
+              ),
+        ),
+      ],
+    );
+  }
+}
 
 class Editprofilepage extends StatefulWidget {
   const Editprofilepage({super.key});
@@ -31,7 +104,9 @@ class _EditprofilepageState extends State<Editprofilepage> {
   String selectedPhysical = "No";
   RxString selectedPhotoPath = ''.obs;
   RxString photoPath = ''.obs;
-
+  Map? selectedEducation;
+  Map? selectedCommunity;
+  Map? selectedGotra;
   TextEditingController txtBirthDate = TextEditingController();
   TextEditingController txtBirthTime = TextEditingController();
   TextEditingController txtBirthPlace = TextEditingController();
@@ -52,8 +127,9 @@ class _EditprofilepageState extends State<Editprofilepage> {
   TextEditingController txtImportantNote = TextEditingController();
   TextEditingController txtGotra = TextEditingController();
   TextEditingController txtCommunity = TextEditingController();
+  TextEditingController txtEducation = TextEditingController();
 
-  getData() {
+  getData() async {
     photoPath.value = homeController.userData.value.profilePhoto == null || homeController.userData.value.profilePhoto!.trim().isEmpty ? ConstHelper.profileImagePath : '${ConstHelper.userImagesPath}${homeController.userData.value.profilePhoto!}';
     txtBirthDate.text = homeController.userData.value.profileDateOfBirth == null || homeController.userData.value.profileDateOfBirth!.year <= 0 ? ConstHelper.naMsg : DateFormat('dd | MMM | yyyy').format(homeController.userData.value.profileDateOfBirth!);
     txtBirthTime.text = homeController.userData.value.profileTimeOfBirth == null || homeController.userData.value.profileTimeOfBirth!.trim().isEmpty ? ConstHelper.naMsg : DateFormat('hh:mm a').format(DateFormat('h:m').parse(homeController.userData.value.profileTimeOfBirth!));
@@ -76,7 +152,11 @@ class _EditprofilepageState extends State<Editprofilepage> {
     txtImportantNote.text = homeController.userData.value.profileNote == null || homeController.userData.value.profileNote!.trim().isEmpty ? ConstHelper.naMsg : homeController.userData.value.profileNote!;
     txtGotra.text = homeController.userData.value.profileGotra == null || homeController.userData.value.profileGotra!.trim().isEmpty ? ConstHelper.naMsg : homeController.userData.value.profileGotra!;
     txtCommunity.text = homeController.userData.value.profileComunityName == null || homeController.userData.value.profileComunityName!.trim().isEmpty ? ConstHelper.naMsg : homeController.userData.value.profileComunityName!;
-  }
+    txtEducation.text = homeController.userData.value.profileEducation == null || homeController.userData.value.profileEducation!.trim().isEmpty ? ConstHelper.naMsg : homeController.userData.value.profileEducation!;
+    homeController.communityDataList.value = await ApiHelper.apiHelper.getCommunityDataList();
+    homeController.educationDataList.value = await ApiHelper.apiHelper.getEducationDataList();
+    }
+
 
   @override
   void initState() {
@@ -86,9 +166,10 @@ class _EditprofilepageState extends State<Editprofilepage> {
 
   @override
   Widget build(BuildContext context) {
+    print(homeController.communityDataList);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Edit Profile",style: TextStyle(fontSize: 20,color: ConstHelper.blackColor,fontWeight: FontWeight.bold,),),
+        title: Text("Edit Profile",style:TextStyle(fontSize: Get.width*0.05,letterSpacing:1,color: ConstHelper.blackColor,fontWeight: FontWeight.bold,),),
         leading: IconButton(
           onPressed: (){
             Get.back();
@@ -186,7 +267,7 @@ class _EditprofilepageState extends State<Editprofilepage> {
                                               style: TextStyle(
                                                 color: ConstHelper.blackColor,
                                                 fontWeight: FontWeight.w600,
-                                                fontSize: 18,
+                                                fontSize: Get.width*0.04,
                                               ),
                                             ),
                                             SizedBox(height: Get.width/30,),
@@ -208,7 +289,7 @@ class _EditprofilepageState extends State<Editprofilepage> {
                                                         style: TextStyle(
                                                           color: ConstHelper.orangeColor,
                                                           fontWeight: FontWeight.w500,
-                                                          fontSize: 14,
+                                                          fontSize: Get.width*0.035,
                                                         ),
                                                       ),
                                                     ],
@@ -231,7 +312,7 @@ class _EditprofilepageState extends State<Editprofilepage> {
                                                         style: TextStyle(
                                                           color: ConstHelper.orangeColor,
                                                           fontWeight: FontWeight.w500,
-                                                          fontSize: 14,
+                                                          fontSize: Get.width*0.035,
                                                         ),
                                                       ),
                                                     ],
@@ -270,7 +351,7 @@ class _EditprofilepageState extends State<Editprofilepage> {
                     style: TextStyle(
                       color: ConstHelper.blackColor,
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                      fontSize: Get.width*0.05,
                     ),
                   ),
                 ),
@@ -284,7 +365,7 @@ class _EditprofilepageState extends State<Editprofilepage> {
                               style: TextStyle(
                                 color: ConstHelper.blackColor,
                                 fontWeight: FontWeight.w500,
-                                fontSize: 14,
+                                fontSize: Get.width*0.035,
                               ),
                             ),
                             TextSpan(
@@ -292,7 +373,7 @@ class _EditprofilepageState extends State<Editprofilepage> {
                               style: TextStyle(
                                 color: ConstHelper.orangeColor,
                                 fontWeight: FontWeight.w500,
-                                fontSize: 14,
+                                fontSize: Get.width*0.035,
                               ),
                             ),
                           ]
@@ -303,93 +384,21 @@ class _EditprofilepageState extends State<Editprofilepage> {
                 Row(
                   children: [
                     Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                             "Date of Birth",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: ConstHelper.blackColor,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
-                              ),
-                            ),
-                            Container(
-                              height: 40,
-                              child: TextFormField(
-                                style: TextStyle(color: ConstHelper.blackColor,),
-                                controller: txtBirthDate,
-                                readOnly: true,
-                                validator: (value) {
-                                  if(value == null || value.trim().isEmpty)
-                                  {
-                                    return "Please enter the full name";
-                                  }
-                                  return null;
-                                },
-                                textCapitalization: TextCapitalization.words,
-                                decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                                  // focusedBorder: OutlineInputBorder(
-                                  //     borderSide: BorderSide(color: ConstHelper.whiteColor,),
-                                  //     borderRadius: BorderRadius.circular(10)
-                                  // ),
-                                  // border: OutlineInputBorder(
-                                  //   borderSide: BorderSide(color: ConstHelper.whiteColor,),
-                                  //   borderRadius: BorderRadius.circular(10)
-                                  // )
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      child: CommonTextField(
+                        label: "Date of Birth",
+                        subLabel: DateFormat("dd-MM-yyyy").format(
+                            homeController
+                                .userData.value.profileDateOfBirth ??
+                                DateTime.now()),
+                      ),
                     ),
                     SizedBox(width: Get.width/30,),
                     Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                             "Date of Time",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: ConstHelper.blackColor,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
-                              ),
-                            ),
-                            Container(
-                              height: 40,
-                              child: TextFormField(
-                                style: TextStyle(color: ConstHelper.blackColor,),
-                                controller: txtBirthTime,
-                                readOnly: true,
-                                validator: (value) {
-                                  if(value == null || value.trim().isEmpty)
-                                  {
-                                    return "Please enter the full name";
-                                  }
-                                  return null;
-                                },
-                                textCapitalization: TextCapitalization.words,
-                                decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                                  // focusedBorder: OutlineInputBorder(
-                                  //     borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //     borderRadius: BorderRadius.circular(10)
-                                  // ),
-                                  // border: OutlineInputBorder(
-                                  //   borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //   borderRadius: BorderRadius.circular(10)
-                                  // )
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      child: CommonTextField(
+                          label: "Time of Birth",
+                          subLabel: convertTo12HourFormat(homeController
+                              .userData.value.profileTimeOfBirth ??
+                              "")),
                     ),
                   ],
                 ),
@@ -397,93 +406,39 @@ class _EditprofilepageState extends State<Editprofilepage> {
                 Row(
                   children: [
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Place of Birth",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: ConstHelper.blackColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Container(
-                            height: 40,
-                            child: TextFormField(
-                              style: TextStyle(color: ConstHelper.blackColor,),
-                              controller: txtBirthPlace,
-                              readOnly: true,
-                              validator: (value) {
-                                if(value == null || value.trim().isEmpty)
-                                {
-                                  return "Please enter the full name";
-                                }
-                                return null;
-                              },
-                              textCapitalization: TextCapitalization.words,
-                             decoration: InputDecoration(
-                                 contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                                  // focusedBorder: OutlineInputBorder(
-                                  //     borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //     borderRadius: BorderRadius.circular(10)
-                                  // ),
-                                  // border: OutlineInputBorder(
-                                  //   borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //   borderRadius: BorderRadius.circular(10)
-                                  // )
-                               border: InputBorder.none,
-                             ),
-                            ),
-                          ),
-                        ],
+                      child: CommonTextField(
+                          label: "Place of Birth",
+                          subLabel: homeController
+                              .userData.value.profilePlaceOfBirth ??
+                              ""),
+                    ),
+                    SizedBox(width: Get.width/30,),
+                    Expanded(
+                      child: CommonTextField(
+                          label: "Height",
+                          subLabel: convertInchesToFeetInch(int.parse(homeController
+                              .userData.value.profileHeight?.toString()??"0")
+                              ),),),
+                  ],
+                ),
+                SizedBox(height: Get.width/60,),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CommonTextField(
+                        label: "Gender",
+                        subLabel:
+                        homeController.userData.value.profileGender ??
+                            "",
                       ),
                     ),
                     SizedBox(width: Get.width/30,),
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Height",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: ConstHelper.blackColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Container(
-                            height: 40,
-                            child: TextFormField(
-                              style: TextStyle(color: ConstHelper.blackColor,),
-                              controller: txtHeight,
-                              readOnly: true,
-                              validator: (value) {
-                                if(value == null || value.trim().isEmpty)
-                                {
-                                  return "Please enter the full name";
-                                }
-                                return null;
-                              },
-                              textCapitalization: TextCapitalization.words,
-                             decoration: InputDecoration(
-                                 contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                                  // focusedBorder: OutlineInputBorder(
-                                  //     borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //     borderRadius: BorderRadius.circular(10)
-                                  // ),
-                                  // border: OutlineInputBorder(
-                                  //   borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //   borderRadius: BorderRadius.circular(10)
-                                  // )
-                               border: InputBorder.none,
-                                ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: CommonTextField(
+                          label: "Mobile No.",
+                          subLabel: homeController
+                              .userData.value.profileMobile ??
+                              "N/A"),
                     ),
                   ],
                 ),
@@ -491,227 +446,26 @@ class _EditprofilepageState extends State<Editprofilepage> {
                 Row(
                   children: [
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Gender",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: ConstHelper.blackColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Container(
-                            height: 40,
-                            child: TextFormField(
-                              style: TextStyle(color: ConstHelper.blackColor,),
-                              controller: txtGender,
-                              readOnly: true,
-                              validator: (value) {
-                                if(value == null || value.trim().isEmpty)
-                                {
-                                  return "Please enter the full name";
-                                }
-                                return null;
-                              },
-                              textCapitalization: TextCapitalization.words,
-                             decoration: InputDecoration(
-                                 contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                                  // focusedBorder: OutlineInputBorder(
-                                  //     borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //     borderRadius: BorderRadius.circular(10)
-                                  // ),
-                                  // border: OutlineInputBorder(
-                                  //   borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //   borderRadius: BorderRadius.circular(10)
-                                  // )
-                                  border: InputBorder.none,
-                                ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: CommonTextField(
+                          label: "Contact No.",
+                          subLabel: homeController
+                              .userData.value.profileMainContactNum ??
+                              "N/A"),
                     ),
                     SizedBox(width: Get.width/30,),
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Mobile No.",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: ConstHelper.blackColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Container(
-                            height: 40,
-                            child: TextFormField(
-                              style: TextStyle(color: ConstHelper.blackColor,),
-                              controller: txtMobileNo,
-                              readOnly: true,
-                              validator: (value) {
-                                if(value == null || value.trim().isEmpty)
-                                {
-                                  return "Please enter the full name";
-                                }
-                                return null;
-                              },
-                              textCapitalization: TextCapitalization.words,
-                             decoration: InputDecoration(
-                                 contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                                  // focusedBorder: OutlineInputBorder(
-                                  //     borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //     borderRadius: BorderRadius.circular(10)
-                                  // ),
-                                  // border: OutlineInputBorder(
-                                  //   borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //   borderRadius: BorderRadius.circular(10)
-                                  // )
-                               border: InputBorder.none,
-                                ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      child: CommonTextField(
+                          label: "Father's Name",
+                          subLabel: homeController
+                              .userData.value.profileFatherFullName ??
+                              ""),
                     ),
                   ],
                 ),
                 SizedBox(height: Get.width/60,),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Contact No.",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: ConstHelper.blackColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Container(
-                            height: 40,
-                            child: TextFormField(
-                              style: TextStyle(color: ConstHelper.blackColor,),
-                              controller: txtMainContactNo,
-                              readOnly: true,
-                              validator: (value) {
-                                if(value == null || value.trim().isEmpty)
-                                {
-                                  return "Please enter the full name";
-                                }
-                                return null;
-                              },
-                              textCapitalization: TextCapitalization.words,
-                             decoration: InputDecoration(
-                                 contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                                  // focusedBorder: OutlineInputBorder(
-                                  //     borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //     borderRadius: BorderRadius.circular(10)
-                                  // ),
-                                  // border: OutlineInputBorder(
-                                  //   borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //   borderRadius: BorderRadius.circular(10)
-                                  // )
-                               border: InputBorder.none,
-                                ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: Get.width/30,),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Father Name",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: ConstHelper.blackColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Container(
-                            height: 40,
-                            child: TextFormField(
-                              style: TextStyle(color: ConstHelper.blackColor,),
-                              controller: txtFatherName,
-                              readOnly: true,
-                              validator: (value) {
-                                if(value == null || value.trim().isEmpty)
-                                {
-                                  return "Please enter the full name";
-                                }
-                                return null;
-                              },
-                              textCapitalization: TextCapitalization.words,
-                              decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                                  // focusedBorder: OutlineInputBorder(
-                                  //     borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //     borderRadius: BorderRadius.circular(10)
-                                  // ),
-                                  // border: OutlineInputBorder(
-                                  //     borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //     borderRadius: BorderRadius.circular(10)
-                                  // )
-                                border: InputBorder.none,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: Get.width/60,),
-                Text(
-                  "Email ID",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: ConstHelper.blackColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
-                ),
-                Container(
-                  height: 40,
-                  child: TextFormField(
-                    style: TextStyle(color: ConstHelper.blackColor,),
-                    controller: txtEmail,
-                    readOnly: true,
-                    validator: (value) {
-                      if(value == null || value.trim().isEmpty)
-                      {
-                        return "Please enter the full name";
-                      }
-                      return null;
-                    },
-                    textCapitalization: TextCapitalization.words,
-                    decoration: InputDecoration(
-                        contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                        // focusedBorder: OutlineInputBorder(
-                        //     borderSide: BorderSide(color: ConstHelper.blackColor,),
-                        //     borderRadius: BorderRadius.circular(10)
-                        // ),
-                        // border: OutlineInputBorder(
-                        //     borderSide: BorderSide(color: ConstHelper.blackColor,),
-                        //     borderRadius: BorderRadius.circular(10)
-                        // )
-                      border: InputBorder.none,
-                    ),
-                  ),
+                CommonTextField(
+                  label: "Email",
+                  subLabel: homeController.userData.value.email ?? "",
                 ),
                 SizedBox(height: Get.width/60,),
                 Row(
@@ -726,26 +480,30 @@ class _EditprofilepageState extends State<Editprofilepage> {
                             style: TextStyle(
                               color: ConstHelper.blackColor,
                               fontWeight: FontWeight.w600,
-                              fontSize: 15,
+                               fontSize: Get.width * 0.04,
                             ),
                           ),
                           Container(
                             height: 40,
                             child: TextFormField(
-                              style: TextStyle(color: ConstHelper.blackColor,),
+                              style: TextStyle(color: ConstHelper.blackColor,
+                  fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
                               controller: txtWhatsappNo,
                               maxLength: 10,
                               validator: (value) {
                                 if(value == null || value.trim().isEmpty)
                                 {
-                                  return "Please enter the full name";
+                                  return "Please enter whatsapp";
                                 }
                                 return null;
                               },
                               textCapitalization: TextCapitalization.words,
                               decoration: InputDecoration(
                                 counterText: "",
-                                  contentPadding: EdgeInsets.only(bottom: 5,left: 8),
+                                  isDense:true,
+                                  hintStyle: TextStyle(color: ConstHelper.blackColor,
+                                      fontWeight: FontWeight.normal,fontSize: Get.width*0.035),
+                                  contentPadding: EdgeInsets.symmetric(horizontal: Get.width*0.04,vertical: Get.height*0.01),
                                   focusedBorder: OutlineInputBorder(
                                       borderSide: BorderSide(color: ConstHelper.blackColor,),
                                       borderRadius: BorderRadius.circular(10)
@@ -771,26 +529,30 @@ class _EditprofilepageState extends State<Editprofilepage> {
                             style: TextStyle(
                               color: ConstHelper.blackColor,
                               fontWeight: FontWeight.w600,
-                              fontSize: 15,
+                               fontSize: Get.width * 0.04,
                             ),
                           ),
                           Container(
                             height: 40,
                             child: TextFormField(
-                              style: TextStyle(color: ConstHelper.blackColor,),
+                              style: TextStyle(color: ConstHelper.blackColor,
+                  fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
                               controller: txtReferenceMobileNo,
                               maxLength: 10,
                               validator: (value) {
                                 if(value == null || value.trim().isEmpty)
                                 {
-                                  return "Please enter the full name";
+                                  return "Please enter reference no";
                                 }
                                 return null;
                               },
                               textCapitalization: TextCapitalization.words,
                               decoration: InputDecoration(
                                   counterText: "",
-                                  contentPadding: EdgeInsets.only(bottom: 5,left: 8),
+                                  isDense:true,
+                                  hintStyle: TextStyle(color: ConstHelper.blackColor,
+                                      fontWeight: FontWeight.normal,fontSize: Get.width*0.035),
+                                  contentPadding: EdgeInsets.symmetric(horizontal: Get.width*0.04,vertical: Get.height*0.01),
                                   focusedBorder: OutlineInputBorder(
                                       borderSide: BorderSide(color: ConstHelper.blackColor,),
                                       borderRadius: BorderRadius.circular(10)
@@ -814,67 +576,330 @@ class _EditprofilepageState extends State<Editprofilepage> {
                   style: TextStyle(
                     color: ConstHelper.blackColor,
                     fontWeight: FontWeight.w600,
-                    fontSize: 15,
+                     fontSize: Get.width * 0.04,
                   ),
                 ),
-                DropdownButtonHideUnderline(
-                  child: DropdownButton2<String>(
-                    isExpanded: true,
-                    items: yesNoList
-                        .map((item) => DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(
-                        item,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: ConstHelper.blackColor,
+                SizedBox(
+                  height: Get.height*0.05,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                      items: yesNoList
+                          .map((item) => DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(
+                          item,
+                          style: TextStyle(color: ConstHelper.blackColor,
+                              fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        overflow: TextOverflow.ellipsis,
+                      ))
+                          .toList(),
+                      value: selectedMarried,
+                      onChanged: (String? value) {
+                        setState(() {
+                          selectedMarried = value.toString();
+                        });
+                      },
+                      buttonStyleData: ButtonStyleData(
+                        height: 40,
+                        width: Get.width,
+                        padding: const EdgeInsets.only(left: 14, right: 14),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                              color: ConstHelper.blackColor
+                          ),
+                        ),
+                        elevation: 0,
                       ),
-                    ))
-                        .toList(),
-                    value: selectedMarried,
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedMarried = value.toString();
-                      });
-                    },
-                    buttonStyleData: ButtonStyleData(
-                      height: 40,
-                      width: Get.width,
-                      padding: const EdgeInsets.only(left: 14, right: 14),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                            color: ConstHelper.blackColor
+                      iconStyleData: IconStyleData(
+                        icon: Icon(
+                          Icons.keyboard_arrow_down,
+                        ),
+                        iconSize: 18,
+                        iconEnabledColor: ConstHelper.blackColor,
+                        iconDisabledColor: Colors.grey,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        width: Get.width ,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        offset: const Offset(-20, 0),
+                        scrollbarTheme: ScrollbarThemeData(
+                          radius: const Radius.circular(40),
+                          thickness: MaterialStateProperty.all<double>(6),
+                          thumbVisibility: MaterialStateProperty.all<bool>(true),
                         ),
                       ),
-                      elevation: 0,
-                    ),
-                    iconStyleData: IconStyleData(
-                      icon: Icon(
-                        Icons.keyboard_arrow_down,
-                      ),
-                      iconSize: 18,
-                      iconEnabledColor: ConstHelper.blackColor,
-                      iconDisabledColor: Colors.grey,
-                    ),
-                    dropdownStyleData: DropdownStyleData(
-                      width: Get.width ,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      offset: const Offset(-20, 0),
-                      scrollbarTheme: ScrollbarThemeData(
-                        radius: const Radius.circular(40),
-                        thickness: MaterialStateProperty.all<double>(6),
-                        thumbVisibility: MaterialStateProperty.all<bool>(true),
+                      menuItemStyleData: const MenuItemStyleData(
+                        height: 40,
+                        padding: EdgeInsets.only(left: 14, right: 14),
                       ),
                     ),
-                    menuItemStyleData: const MenuItemStyleData(
-                      height: 40,
-                      padding: EdgeInsets.only(left: 14, right: 14),
+                  ),
+                ),
+                SizedBox(height: Get.width/60,),
+                Text(
+                  "Community",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: ConstHelper.blackColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: Get.width * 0.04,
+                  ),
+                ),
+                SizedBox(
+                  height: Get.height*0.05,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton2(
+                      isExpanded: true,
+                      items: homeController.communityDataList
+                          .map((element) => DropdownMenuItem(
+                        value: element,
+                        child: Text(
+                          (element['community_name'] ?? '').toString(),
+                          style: TextStyle(
+                            color: ConstHelper.blackColor,
+                            fontSize: Get.width * 0.04,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ))
+                          .toList(),
+                      value: txtCommunity.text.isEmpty
+                          ? null
+                          : homeController.communityDataList.firstWhere(
+                            (element) => element['community_name'] == txtCommunity.text,
+                        orElse: () => null,
+                      ),
+                      onChanged: (value) async {
+                        EasyLoading.show(status: ConstHelper.pleaseWaitMsg);
+                        await Future.delayed(const Duration(milliseconds: 100));
+                        value as Map;
+                          txtGotra.text ="";
+                          txtCommunity.text =value?["community_name"]??"";
+                          try {homeController
+                              .gotraDataListCommunityIdWise.clear();
+                            homeController.gotraDataListCommunityIdWise.value =
+                            await ApiHelper.apiHelper.getGotraDataListCommunityWise(
+                              comunityId: (value["id"]).toString(),
+                            );
+                          setState(() {});
+                          } catch (error) {
+                            homeController.gotraDataListCommunityIdWise.value = [];
+                            EasyLoading.dismiss();
+                            ConstHelper.errorDialog(
+                              text: ConstHelper.somethingErrorMsg,
+                              seconds: 10,
+                            );
+                          }
+                        EasyLoading.dismiss();
+                      },
+                      buttonStyleData: ButtonStyleData(
+                        height: 40,
+                        width: Get.width,
+                        padding: const EdgeInsets.only(left: 14, right: 14),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                              color: ConstHelper.blackColor
+                          ),
+                        ),
+                        elevation: 0,
+                      ),
+                      iconStyleData: IconStyleData(
+                        icon: Icon(
+                          Icons.keyboard_arrow_down,
+                        ),
+                        iconSize: 18,
+                        iconEnabledColor: ConstHelper.blackColor,
+                        iconDisabledColor: Colors.grey,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        width: Get.width ,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        offset: const Offset(-20, 0),
+                        scrollbarTheme: ScrollbarThemeData(
+                          radius: const Radius.circular(40),
+                          thickness: MaterialStateProperty.all<double>(6),
+                          thumbVisibility: MaterialStateProperty.all<bool>(true),
+                        ),
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        height: 40,
+                        padding: EdgeInsets.only(left: 14, right: 14),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: Get.width/60,),
+                Text(
+                  "Gotra",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: ConstHelper.blackColor,
+                    fontWeight: FontWeight.w600,
+                     fontSize: Get.width * 0.04,
+                  ),
+                ),
+                SizedBox(
+                  height: Get.height*0.05,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton2(
+                      isExpanded: true,
+                      items: homeController
+                          .gotraDataListCommunityIdWise
+                          .map((element) {
+                        return DropdownMenuItem<
+                            Map<dynamic, dynamic>>(
+                          value: element,
+                          // Pass the full element as value
+                          child: Text(
+                            (element['gotra_name'] ?? '')
+                                .toString(),
+                            style: TextStyle(
+                              color: ConstHelper.blackColor,
+                              fontSize: Get.width * 0.04,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      value: txtGotra.text.isEmpty
+                          ? null
+                          : homeController.gotraDataListCommunityIdWise.firstWhere(
+                            (element) => element['gotra_name'] == txtGotra.text,
+                        orElse: () => null,
+                      ),
+                      onChanged: (value) async {
+                        if (value != null) {
+                          value as Map;
+                          txtGotra.text = value['gotra_name'];
+                        }
+                        setState(() {});
+                      },
+                      buttonStyleData: ButtonStyleData(
+                        height: 40,
+                        width: Get.width,
+                        padding: const EdgeInsets.only(left: 14, right: 14),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                              color: ConstHelper.blackColor
+                          ),
+                        ),
+                        elevation: 0,
+                      ),
+                      iconStyleData: IconStyleData(
+                        icon: Icon(
+                          Icons.keyboard_arrow_down,
+                        ),
+                        iconSize: 18,
+                        iconEnabledColor: ConstHelper.blackColor,
+                        iconDisabledColor: Colors.grey,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        width: Get.width ,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        offset: const Offset(-20, 0),
+                        scrollbarTheme: ScrollbarThemeData(
+                          radius: const Radius.circular(40),
+                          thickness: MaterialStateProperty.all<double>(6),
+                          thumbVisibility: MaterialStateProperty.all<bool>(true),
+                        ),
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        height: 40,
+                        padding: EdgeInsets.only(left: 14, right: 14),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: Get.width/60,),
+                Text(
+                  "Education",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: ConstHelper.blackColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: Get.width * 0.04,
+                  ),
+                ),
+                SizedBox(
+                  height: Get.height*0.05,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton2(
+                      isExpanded: true,
+                      items: homeController.educationDataList
+                          .map((element) {
+                        return DropdownMenuItem(
+                          value: element,
+                          // Pass the full element as value
+                          child: Text(
+                            (element['education_name'] ?? '')
+                                .toString(),
+                            style: TextStyle(
+                              color: ConstHelper.blackColor,
+                              fontSize: Get.width * 0.04,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      value: txtEducation.text.isEmpty
+                          ? null
+                          : homeController.educationDataList.firstWhere(
+                            (element) => element['education_name'] == txtEducation.text,
+                        orElse: () => null,
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedEducation = value as Map;
+                          txtEducation.text = selectedEducation?['education_name'] ?? '';
+                        });
+                      },
+                      buttonStyleData: ButtonStyleData(
+                        height: 40,
+                        width: Get.width,
+                        padding: const EdgeInsets.only(left: 14, right: 14),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                              color: ConstHelper.blackColor
+                          ),
+                        ),
+                        elevation: 0,
+                      ),
+                      iconStyleData: IconStyleData(
+                        icon: Icon(
+                          Icons.keyboard_arrow_down,
+                        ),
+                        iconSize: 18,
+                        iconEnabledColor: ConstHelper.blackColor,
+                        iconDisabledColor: Colors.grey,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        width: Get.width ,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        offset: const Offset(-20, 0),
+                        scrollbarTheme: ScrollbarThemeData(
+                          radius: const Radius.circular(40),
+                          thickness: MaterialStateProperty.all<double>(6),
+                          thumbVisibility: MaterialStateProperty.all<bool>(true),
+                        ),
+                      ),
+                      menuItemStyleData: const MenuItemStyleData(
+                        height: 40,
+                        padding: EdgeInsets.only(left: 14, right: 14),
+                      ),
                     ),
                   ),
                 ),
@@ -885,67 +910,67 @@ class _EditprofilepageState extends State<Editprofilepage> {
                   style: TextStyle(
                     color: ConstHelper.blackColor,
                     fontWeight: FontWeight.w600,
-                    fontSize: 15,
+                     fontSize: Get.width * 0.04,
                   ),
                 ),
-                DropdownButtonHideUnderline(
-                  child: DropdownButton2<String>(
-                    isExpanded: true,
-                    items: yesNoList
-                        .map((item) => DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(
-                        item,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: ConstHelper.blackColor,
+                SizedBox(
+                  height: Get.height*0.05,
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton2<String>(
+                      isExpanded: true,
+                      items: yesNoList
+                          .map((item) => DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(
+                          item,
+                          style:TextStyle(color: ConstHelper.blackColor,
+                              fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        overflow: TextOverflow.ellipsis,
+                      ))
+                          .toList(),
+                      value: selectedPhysical,
+                      onChanged: (String? value) {
+                        setState(() {
+                          selectedPhysical = value.toString();
+                        });
+                      },
+                      buttonStyleData: ButtonStyleData(
+                        height: 40,
+                        width: Get.width,
+                        padding: const EdgeInsets.only(left: 14, right: 14),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                              color: ConstHelper.blackColor
+                          ),
+                        ),
+                        elevation: 0,
                       ),
-                    ))
-                        .toList(),
-                    value: selectedPhysical,
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedPhysical = value.toString();
-                      });
-                    },
-                    buttonStyleData: ButtonStyleData(
-                      height: 40,
-                      width: Get.width,
-                      padding: const EdgeInsets.only(left: 14, right: 14),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                            color: ConstHelper.blackColor
+                      iconStyleData: IconStyleData(
+                        icon: Icon(
+                          Icons.keyboard_arrow_down,
+                        ),
+                        iconSize: 18,
+                        iconEnabledColor: ConstHelper.blackColor,
+                        iconDisabledColor: Colors.grey,
+                      ),
+                      dropdownStyleData: DropdownStyleData(
+                        width: Get.width ,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        offset: const Offset(-20, 0),
+                        scrollbarTheme: ScrollbarThemeData(
+                          radius: const Radius.circular(40),
+                          thickness: MaterialStateProperty.all<double>(6),
+                          thumbVisibility: MaterialStateProperty.all<bool>(true),
                         ),
                       ),
-                      elevation: 0,
-                    ),
-                    iconStyleData: IconStyleData(
-                      icon: Icon(
-                        Icons.keyboard_arrow_down,
+                      menuItemStyleData: const MenuItemStyleData(
+                        height: 40,
+                        padding: EdgeInsets.only(left: 14, right: 14),
                       ),
-                      iconSize: 18,
-                      iconEnabledColor: ConstHelper.blackColor,
-                      iconDisabledColor: Colors.grey,
-                    ),
-                    dropdownStyleData: DropdownStyleData(
-                      width: Get.width ,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      offset: const Offset(-20, 0),
-                      scrollbarTheme: ScrollbarThemeData(
-                        radius: const Radius.circular(40),
-                        thickness: MaterialStateProperty.all<double>(6),
-                        thumbVisibility: MaterialStateProperty.all<bool>(true),
-                      ),
-                    ),
-                    menuItemStyleData: const MenuItemStyleData(
-                      height: 40,
-                      padding: EdgeInsets.only(left: 14, right: 14),
                     ),
                   ),
                 ),
@@ -956,33 +981,34 @@ class _EditprofilepageState extends State<Editprofilepage> {
                   style: TextStyle(
                     color: ConstHelper.blackColor,
                     fontWeight: FontWeight.w600,
-                    fontSize: 15,
+                     fontSize: Get.width * 0.04,
                   ),
                 ),
-                Container(
-                  height: 40,
-                  child: TextFormField(
-                    style: TextStyle(color: ConstHelper.blackColor,),
-                    controller: txtQualification,
-                    validator: (value) {
-                      if(value == null || value.trim().isEmpty)
-                      {
-                        return "Please enter the full name";
-                      }
-                      return null;
-                    },
-                    textCapitalization: TextCapitalization.words,
-                    decoration: InputDecoration(
-                        contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: ConstHelper.blackColor,),
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: ConstHelper.blackColor,),
-                            borderRadius: BorderRadius.circular(10)
-                        )
-                    ),
+                TextFormField(
+                  style: TextStyle(color: ConstHelper.blackColor,
+                fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                  controller: txtQualification,
+                  validator: (value) {
+                    if(value == null || value.trim().isEmpty)
+                    {
+                      return "Please enter qualification";
+                    }
+                    return null;
+                  },
+                  textCapitalization: TextCapitalization.words,
+                  decoration: InputDecoration(
+                      isDense:true,
+                      hintStyle: TextStyle(color: ConstHelper.blackColor,
+                          fontWeight: FontWeight.normal,fontSize: Get.width*0.035),
+                      contentPadding: EdgeInsets.symmetric(horizontal: Get.width*0.04,vertical: Get.height*0.01),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: ConstHelper.blackColor,),
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: ConstHelper.blackColor,),
+                          borderRadius: BorderRadius.circular(10)
+                      )
                   ),
                 ),
                 SizedBox(height: Get.width/60,),
@@ -992,33 +1018,34 @@ class _EditprofilepageState extends State<Editprofilepage> {
                   style: TextStyle(
                     color: ConstHelper.blackColor,
                     fontWeight: FontWeight.w600,
-                    fontSize: 15,
+                     fontSize: Get.width * 0.04,
                   ),
                 ),
-                Container(
-                  height: 40,
-                  child: TextFormField(
-                    style: TextStyle(color: ConstHelper.blackColor,),
-                    controller: txtOccupation,
-                    validator: (value) {
-                      if(value == null || value.trim().isEmpty)
-                      {
-                        return "Please enter the full name";
-                      }
-                      return null;
-                    },
-                    textCapitalization: TextCapitalization.words,
-                    decoration: InputDecoration(
-                        contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: ConstHelper.blackColor,),
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: ConstHelper.blackColor,),
-                            borderRadius: BorderRadius.circular(10)
-                        )
-                    ),
+                TextFormField(
+                  style: TextStyle(color: ConstHelper.blackColor,
+                fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                  controller: txtOccupation,
+                  validator: (value) {
+                    if(value == null || value.trim().isEmpty)
+                    {
+                      return "Please enter occupation";
+                    }
+                    return null;
+                  },
+                  textCapitalization: TextCapitalization.words,
+                  decoration: InputDecoration(
+                      isDense:true,
+                      hintStyle: TextStyle(color: ConstHelper.blackColor,
+                          fontWeight: FontWeight.normal,fontSize: Get.width*0.035),
+                      contentPadding: EdgeInsets.symmetric(horizontal: Get.width*0.04,vertical: Get.height*0.01),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: ConstHelper.blackColor,),
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: ConstHelper.blackColor,),
+                          borderRadius: BorderRadius.circular(10)
+                      )
                   ),
                 ),
                 SizedBox(height: Get.width/60,),
@@ -1034,33 +1061,34 @@ class _EditprofilepageState extends State<Editprofilepage> {
                             style: TextStyle(
                               color: ConstHelper.blackColor,
                               fontWeight: FontWeight.w600,
-                              fontSize: 15,
+                               fontSize: Get.width * 0.04,
                             ),
                           ),
-                          Container(
-                            height: 40,
-                            child: TextFormField(
-                              style: TextStyle(color: ConstHelper.blackColor,),
-                              controller: txtReferenceName,
-                              validator: (value) {
-                                if(value == null || value.trim().isEmpty)
-                                {
-                                  return "Please enter the full name";
-                                }
-                                return null;
-                              },
-                              textCapitalization: TextCapitalization.words,
-                              decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                      borderRadius: BorderRadius.circular(10)
-                                  ),
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                      borderRadius: BorderRadius.circular(10)
-                                  )
-                              ),
+                          TextFormField(
+                            style: TextStyle(color: ConstHelper.blackColor,
+                                            fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                            controller: txtReferenceName,
+                            validator: (value) {
+                              if(value == null || value.trim().isEmpty)
+                              {
+                                return "Please enter reference name";
+                              }
+                              return null;
+                            },
+                            textCapitalization: TextCapitalization.words,
+                            decoration: InputDecoration(
+                                isDense:true,
+                                hintStyle: TextStyle(color: ConstHelper.blackColor,
+                                    fontWeight: FontWeight.normal,fontSize: Get.width*0.035),
+                                contentPadding: EdgeInsets.symmetric(horizontal: Get.width*0.04,vertical: Get.height*0.01),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: ConstHelper.blackColor,),
+                                    borderRadius: BorderRadius.circular(10)
+                                ),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(color: ConstHelper.blackColor,),
+                                    borderRadius: BorderRadius.circular(10)
+                                )
                             ),
                           ),
                         ],
@@ -1077,33 +1105,34 @@ class _EditprofilepageState extends State<Editprofilepage> {
                             style: TextStyle(
                               color: ConstHelper.blackColor,
                               fontWeight: FontWeight.w600,
-                              fontSize: 15,
+                               fontSize: Get.width * 0.04,
                             ),
                           ),
-                          Container(
-                            height: 40,
-                            child: TextFormField(
-                              style: TextStyle(color: ConstHelper.blackColor,),
-                              controller: txtWorkingCity,
-                              validator: (value) {
-                                if(value == null || value.trim().isEmpty)
-                                {
-                                  return "Please enter the full name";
-                                }
-                                return null;
-                              },
-                              textCapitalization: TextCapitalization.words,
-                              decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                      borderRadius: BorderRadius.circular(10)
-                                  ),
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                      borderRadius: BorderRadius.circular(10)
-                                  )
-                              ),
+                          TextFormField(
+                            style: TextStyle(color: ConstHelper.blackColor,
+                                            fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                            controller: txtWorkingCity,
+                            validator: (value) {
+                              if(value == null || value.trim().isEmpty)
+                              {
+                                return "Please enter working city";
+                              }
+                              return null;
+                            },
+                            textCapitalization: TextCapitalization.words,
+                            decoration: InputDecoration(
+                                isDense:true,
+                                hintStyle: TextStyle(color: ConstHelper.blackColor,
+                                    fontWeight: FontWeight.normal,fontSize: Get.width*0.035),
+                                contentPadding: EdgeInsets.symmetric(horizontal: Get.width*0.04,vertical: Get.height*0.01),
+                                focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: ConstHelper.blackColor,),
+                                    borderRadius: BorderRadius.circular(10)
+                                ),
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(color: ConstHelper.blackColor,),
+                                    borderRadius: BorderRadius.circular(10)
+                                )
                             ),
                           ),
                         ],
@@ -1118,33 +1147,36 @@ class _EditprofilepageState extends State<Editprofilepage> {
                   style: TextStyle(
                     color: ConstHelper.blackColor,
                     fontWeight: FontWeight.w600,
-                    fontSize: 15,
+                     fontSize: Get.width * 0.04,
                   ),
                 ),
-                Container(
-                  height: 40,
-                  child: TextFormField(
-                    style: TextStyle(color: ConstHelper.blackColor,),
-                    controller: txtAddress,
-                    validator: (value) {
-                      if(value == null || value.trim().isEmpty)
-                      {
-                        return "Please enter the full name";
-                      }
-                      return null;
-                    },
-                    textCapitalization: TextCapitalization.words,
-                    decoration: InputDecoration(
-                        contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: ConstHelper.blackColor,),
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: ConstHelper.blackColor,),
-                            borderRadius: BorderRadius.circular(10)
-                        )
-                    ),
+                TextFormField(
+                  style: TextStyle(color: ConstHelper.blackColor,
+                  fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                  controller: txtAddress,
+                  maxLines: 4,
+                  maxLength: 250,
+                  validator: (value) {
+                    if(value == null || value.trim().isEmpty)
+                    {
+                      return "Please enter the full name";
+                    }
+                    return null;
+                  },
+                  textCapitalization: TextCapitalization.words,
+                  decoration: InputDecoration(
+                      isDense:true,
+                      hintStyle: TextStyle(color: ConstHelper.blackColor,
+                          fontWeight: FontWeight.normal,fontSize: Get.width*0.035),
+                      contentPadding: EdgeInsets.symmetric(horizontal: Get.width*0.04,vertical: Get.height*0.01),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: ConstHelper.blackColor,),
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: ConstHelper.blackColor,),
+                          borderRadius: BorderRadius.circular(10)
+                      )
                   ),
                 ),
                 SizedBox(height: Get.width/60,),
@@ -1154,132 +1186,40 @@ class _EditprofilepageState extends State<Editprofilepage> {
                   style: TextStyle(
                     color: ConstHelper.blackColor,
                     fontWeight: FontWeight.w600,
-                    fontSize: 15,
+                     fontSize: Get.width * 0.04,
                   ),
                 ),
-                Container(
-                  height: 40,
-                  child: TextFormField(
-                    style: TextStyle(color: ConstHelper.blackColor,),
-                    controller: txtImportantNote,
-                    validator: (value) {
-                      if(value == null || value.trim().isEmpty)
-                      {
-                        return "Please enter the full name";
-                      }
-                      return null;
-                    },
-                    textCapitalization: TextCapitalization.words,
-                    decoration: InputDecoration(
-                        contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: ConstHelper.blackColor,),
-                            borderRadius: BorderRadius.circular(10)
-                        ),
-                        border: OutlineInputBorder(
-                            borderSide: BorderSide(color: ConstHelper.blackColor,),
-                            borderRadius: BorderRadius.circular(10)
-                        )
-                    ),
+                TextFormField(
+                  style: TextStyle(color: ConstHelper.blackColor,
+                  fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                  controller: txtImportantNote,
+                  maxLength: 500,
+                  maxLines: 4,
+                  validator: (value) {
+                    if(value == null || value.trim().isEmpty)
+                    {
+                      return "Please enter note";
+                    }
+                    return null;
+                  },
+                  textCapitalization: TextCapitalization.words,
+                  decoration: InputDecoration(
+                      isDense:true,
+                      hintStyle: TextStyle(color: ConstHelper.blackColor,
+                          fontWeight: FontWeight.normal,fontSize: Get.width*0.035),
+                      contentPadding: EdgeInsets.symmetric(horizontal: Get.width*0.04,vertical: Get.height*0.01),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: ConstHelper.blackColor,),
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: ConstHelper.blackColor,),
+                          borderRadius: BorderRadius.circular(10)
+                      )
                   ),
                 ),
-                SizedBox(height: Get.width/60,),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Gotra",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: ConstHelper.blackColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Container(
-                            height: 40,
-                            child: TextFormField(
-                              style: TextStyle(color: ConstHelper.blackColor,),
-                              controller: txtGotra,
-                              readOnly: true,
-                              validator: (value) {
-                                if(value == null || value.trim().isEmpty)
-                                {
-                                  return "Please enter the full name";
-                                }
-                                return null;
-                              },
-                              textCapitalization: TextCapitalization.words,
-                              decoration: InputDecoration(
-                                  counterText: "",
-                                  contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                                  // focusedBorder: OutlineInputBorder(
-                                  //     borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //     borderRadius: BorderRadius.circular(10)
-                                  // ),
-                                  // border: OutlineInputBorder(
-                                  //     borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //     borderRadius: BorderRadius.circular(10)
-                                  // )
-                                border: InputBorder.none,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: Get.width/30,),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Community",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: ConstHelper.blackColor,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 15,
-                            ),
-                          ),
-                          Container(
-                            height: 40,
-                            child: TextFormField(
-                              style: TextStyle(color: ConstHelper.blackColor,),
-                              controller: txtCommunity,
-                              readOnly: true,
-                              validator: (value) {
-                                if(value == null || value.trim().isEmpty)
-                                {
-                                  return "Please enter the full name";
-                                }
-                                return null;
-                              },
-                              textCapitalization: TextCapitalization.words,
-                              decoration: InputDecoration(
-                                  counterText: "",
-                                  contentPadding: EdgeInsets.only(bottom: 5,left: 8),
-                                  // focusedBorder: OutlineInputBorder(
-                                  //     borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //     borderRadius: BorderRadius.circular(10)
-                                  // ),
-                                  // border: OutlineInputBorder(
-                                  //     borderSide: BorderSide(color: ConstHelper.blackColor,),
-                                  //     borderRadius: BorderRadius.circular(10)
-                                  // )
-                                border: InputBorder.none,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: Get.width/10,),
+                SizedBox(height: Get.width/80,),
+              
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: Get.width/8,),
                   child: InkWell(
@@ -1313,11 +1253,11 @@ class _EditprofilepageState extends State<Editprofilepage> {
                       alignment: Alignment.center,
                       padding: EdgeInsets.symmetric(vertical: Get.width/30,),
                       child: Text(
-                        'Update',
+                        'Save Changes',
                         style: TextStyle(
                           color: ConstHelper.whiteColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                          fontSize: Get.width*0.045,
                         ),
                       ),
                     ),

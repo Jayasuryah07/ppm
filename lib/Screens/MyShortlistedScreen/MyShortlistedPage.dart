@@ -46,7 +46,7 @@ class _MyShortlistedPageState extends State<MyShortlistedPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("My Shortlisted",style: TextStyle(fontSize: 20,color: ConstHelper.blackColor,fontWeight: FontWeight.bold,),),
+          title: Text("Shortlisted Profiles",style: TextStyle(fontSize: Get.width*0.05,letterSpacing:1,color: ConstHelper.blackColor,fontWeight: FontWeight.bold,),),
           leading: IconButton(
             onPressed: (){
               Get.back();
@@ -84,14 +84,23 @@ class _MyShortlistedPageState extends State<MyShortlistedPage> {
                 : homeController.allShortlistedDataList.isEmpty ? ListView(
               children: [
                 SizedBox(height: Get.height/2.5,),
-                Center(
-                  child: Text(
-                    'Sorry, Data Not Available',
-                    style: TextStyle(
-                      color: ConstHelper.blackColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                Padding(
+                  padding:  EdgeInsets.symmetric(horizontal: Get.width*0.04),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Your shortlist is empty! Start browsing and save your favorites now!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: ConstHelper.orangeDarkColor,
+                            fontSize: Get.width * 0.05,
+                            letterSpacing: 1,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -190,9 +199,12 @@ class _MyShortlistedPageState extends State<MyShortlistedPage> {
                                       Text(
                                         '${homeController.allShortlistedDataList[index].id == null || homeController.allShortlistedDataList[index].id == 0 ? 'Id not available' : homeController.allShortlistedDataList[index].id!} - ${homeController.allShortlistedDataList[index].name == null || homeController.allShortlistedDataList[index].name!.trim().isEmpty ? ConstHelper.nameNotAvailableMsg : homeController.allShortlistedDataList[index].name}',
                                         style: TextStyle(
-                                          color: ConstHelper.blackColor,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
+                                          color: ConstHelper
+                                              .orangeDarkColor,
+                                          fontWeight:
+                                          FontWeight.w600,
+                                          fontSize:
+                                          Get.width * 0.04,
                                         ),
                                       ),
                                       // Text(
@@ -210,16 +222,24 @@ class _MyShortlistedPageState extends State<MyShortlistedPage> {
                                               Text(
                                                 'DOB : ',
                                                 style: TextStyle(
-                                                  color: ConstHelper.blackColor,
-                                                  fontSize: 12,
+                                                  color: ConstHelper
+                                                      .blackColor,
+                                                  fontSize:
+                                                  Get.width *
+                                                      0.035,
                                                 ),
                                               ),
                                               Text(
                                                 homeController.allShortlistedDataList[index].profileDateOfBirth == null || homeController.allShortlistedDataList[index].profileDateOfBirth!.year <= 0 ? 'N/A' : DateFormat('dd | MMM | yyyy').format(homeController.allShortlistedDataList[index].profileDateOfBirth!),
                                                 style: TextStyle(
-                                                  color: ConstHelper.greyColor,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 12,
+                                                  color: ConstHelper
+                                                      .greyColor,
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .w500,
+                                                  fontSize:
+                                                  Get.width *
+                                                      0.035,
                                                 ),
                                               ),
                                             ],
@@ -230,16 +250,25 @@ class _MyShortlistedPageState extends State<MyShortlistedPage> {
                                               Text(
                                                 'EDU : ',
                                                 style: TextStyle(
-                                                  color: ConstHelper.blackColor,
-                                                  fontSize: 12,
+                                                  color: ConstHelper
+                                                      .blackColor,
+                                                  fontSize:
+                                                  Get.width *
+                                                      0.035,
                                                 ),
                                               ),
+
                                               Text(
                                                 homeController.allShortlistedDataList[index].profileEducation == null || homeController.allShortlistedDataList[index].profileEducation!.trim().isEmpty ? 'N/A' : homeController.allShortlistedDataList[index].profileEducation!,
                                                 style: TextStyle(
-                                                  color: ConstHelper.greyColor,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 12,
+                                                  color: ConstHelper
+                                                      .greyColor,
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .w500,
+                                                  fontSize:
+                                                  Get.width *
+                                                      0.035,
                                                 ),
                                               ),
                                             ],
@@ -251,18 +280,35 @@ class _MyShortlistedPageState extends State<MyShortlistedPage> {
                                           Text(
                                             'City : ',
                                             style: TextStyle(
-                                              color: ConstHelper.blackColor,
-                                              fontSize: 12,
+                                              color: ConstHelper
+                                                  .blackColor,
+                                              fontSize:
+                                              Get.width *
+                                                  0.035,
                                             ),
                                           ),
                                           Text(
-                                            '${homeController.allShortlistedDataList[index].profileWorkingCity == null || homeController.allShortlistedDataList[index].profileWorkingCity!.trim().isEmpty ? '' : homeController.allShortlistedDataList[index].profileWorkingCity!}${homeController.allShortlistedDataList[index].profileWorkingCity != null && homeController.allShortlistedDataList[index].profilePermanentAddress!.trim().isNotEmpty && homeController.allShortlistedDataList[index].profilePermanentAddress != null && homeController.allShortlistedDataList[index].profilePermanentAddress!.trim().isNotEmpty ? ' | ' : 'N/A'}${homeController.allShortlistedDataList[index].profilePermanentAddress == null || homeController.allShortlistedDataList[index].profilePermanentAddress!.trim().isEmpty ? '' : homeController.allShortlistedDataList[index].profilePermanentAddress!}',
+                                            (() {
+                                              final city = homeController.allShortlistedDataList[index].profileWorkingCity?.trim();
+                                              final address = homeController.allShortlistedDataList[index].profilePermanentAddress?.trim();
+
+                                              if ((city == null || city.isEmpty) && (address == null || address.isEmpty)) {
+                                                return 'N/A';
+                                              } else if (city != null && address != null && city.toLowerCase() == address.toLowerCase()) {
+                                                return city;
+                                              } else if (city != null && city.isNotEmpty && address != null && address.isNotEmpty) {
+                                                return '$city | $address';
+                                              } else {
+                                                return city?.isNotEmpty == true ? city! : address!;
+                                              }
+                                            })(),
                                             style: TextStyle(
                                               color: ConstHelper.greyColor,
                                               fontWeight: FontWeight.w500,
-                                              fontSize: 12,
+                                              fontSize: Get.width * 0.035,
                                             ),
                                           ),
+
                                         ],
                                       ),
                                     ],

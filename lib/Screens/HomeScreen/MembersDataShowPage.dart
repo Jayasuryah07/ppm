@@ -10,6 +10,8 @@ import '../../Utils/ApiHelper.dart';
 import '../../Utils/ConstHelper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../MyProfileScreen/EditProfilePage.dart';
+
 class MembersDataShowPage extends StatefulWidget {
   const MembersDataShowPage({super.key});
 
@@ -27,7 +29,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Profile",style: TextStyle(fontSize: 20,color: ConstHelper.blackColor,fontWeight: FontWeight.bold,),),
+          title: Text("Profile",style:TextStyle(fontSize: Get.width*0.05,letterSpacing:1,color: ConstHelper.blackColor,fontWeight: FontWeight.bold,),),
           leading: IconButton(
             onPressed: () async {
               Get.back();
@@ -277,7 +279,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                         style: TextStyle(
                           color: ConstHelper.blackColor,
                           fontWeight: FontWeight.bold,
-                          fontSize: 21,
+                            fontSize: Get.width * 0.06,
                         ),
                       ),
                       Text(
@@ -286,7 +288,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                         style: TextStyle(
                           color: ConstHelper.blackColor,
                           fontWeight: FontWeight.w500,
-                          fontSize: 16,
+                          fontSize: Get.width * 0.045,
                         ),
                       ),
                       Center(
@@ -296,7 +298,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                           style: TextStyle(
                             color: ConstHelper.orangeColor,
                             fontWeight: FontWeight.bold,
-                            fontSize: 21,
+                            fontSize: Get.width * 0.06,
                           ),
                         ),
                       ),
@@ -320,7 +322,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                       ),
                       SizedBox(height: Get.width/20,),
                       Row(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
+                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Text(
@@ -339,18 +341,18 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                       ),
                       SizedBox(height: Get.width/90,),
                       Row(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Text(
-                              'Date of Time',
+                              'Time of Birth',
                               style: titleTextStyle,
                             ),
                           ),
                           threeDotWidget(),
                           Expanded(
                             child: Text(
-                              homeController.selectedMembersData.value.profileTimeOfBirth == null || homeController.selectedMembersData.value.profileTimeOfBirth!.trim().isEmpty ? ConstHelper.naMsg : homeController.selectedMembersData.value.profileTimeOfBirth!,
+                                convertTo12HourFormat( homeController.selectedMembersData.value.profileTimeOfBirth??""),
                               style: valueTextStyle,
                             ),
                           ),
@@ -358,7 +360,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                       ),
                       SizedBox(height: Get.width/90,),
                       Row(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Text(
@@ -377,7 +379,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                       ),
                       SizedBox(height: Get.width/90,),
                       Row(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Text(
@@ -388,7 +390,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                           threeDotWidget(),
                           Expanded(
                             child: Text(
-                              homeController.selectedMembersData.value.profileHeight == null || homeController.selectedMembersData.value.profileHeight!.trim().isEmpty ? ConstHelper.naMsg : '${homeController.selectedMembersData.value.profileHeight![0]} ft ${homeController.selectedMembersData.value.profileHeight!.substring(1)} Inch',
+                                convertInchesToFeetInch(int.parse(homeController.selectedMembersData.value.profileHeight.toString()??"0")),
                               style: valueTextStyle,
                             ),
                           ),
@@ -443,7 +445,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                       ),
                       SizedBox(height: Get.width/20,),
                       Row(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
+                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Text(
@@ -462,7 +464,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                       ),
                       SizedBox(height: Get.width/90,),
                       Row(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Text(
@@ -557,7 +559,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                       ),
                       SizedBox(height: Get.width/20,),
                       Row(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
+                       crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Text(
@@ -699,7 +701,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                       // ),
                       SizedBox(height: Get.width/90,),
                       Row(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
+                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Text(
@@ -718,7 +720,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                       ),
                       SizedBox(height: Get.width/90,),
                       Row(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
+                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Text(
@@ -737,7 +739,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                       ),
                       SizedBox(height: Get.width/90,),
                       Row(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Text(
@@ -756,7 +758,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                       ),
                       SizedBox(height: Get.width/90,),
                       Row(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Text(
@@ -775,7 +777,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                       ),
                       SizedBox(height: Get.width/90,),
                       Row(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Text(
@@ -794,7 +796,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                       ),
                       SizedBox(height: Get.width/90,),
                       Row(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
+                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Text(
@@ -813,7 +815,7 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
                       ),
                       SizedBox(height: Get.width/90,),
                       Row(
-                        // crossAxisAlignment: CrossAxisAlignment.start,
+                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Expanded(
                             child: Text(
@@ -1163,22 +1165,23 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
   }
 
   TextStyle headingTextStyle = TextStyle(
-    color: ConstHelper.blackColor,
-    fontWeight: FontWeight.w600,
-    fontSize: 14,
-  );
+      color: ConstHelper.blackColor,
+      fontWeight: FontWeight.w600,
+      fontSize: Get.width * 0.045,
+      letterSpacing: 1);
 
   TextStyle titleTextStyle = TextStyle(
     color: ConstHelper.blackColor,
-    fontSize: 12,
+    fontSize: Get.width * 0.04,
     fontWeight: FontWeight.w500,
   );
 
   TextStyle valueTextStyle = TextStyle(
-    color: ConstHelper.cementColor,
-    fontSize: 12,
+    color: ConstHelper.orangeColor,
+    fontSize: Get.width * 0.04,
     fontWeight: FontWeight.w500,
   );
+
 
   Widget threeDotWidget() => Padding(
     padding: EdgeInsets.only(right: Get.width/30,left: Get.width/90,),
@@ -1195,4 +1198,10 @@ class _MembersDataShowPageState extends State<MembersDataShowPage> {
       SizedBox(height: Get.width/20,),
     ],
   );
+}
+String convertInchesToFeetInch(int inches) {
+  if (inches <= 0) return "";
+  int feet = inches ~/ 12;
+  int remainingInches = inches % 12;
+  return "$feet ft $remainingInches Inch";
 }

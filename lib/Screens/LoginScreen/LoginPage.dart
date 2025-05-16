@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController txtUsername = TextEditingController();
   TextEditingController txtPassword = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  RxBool hidePassword = false.obs;
+  RxBool hidePassword = true.obs;
 
   FocusNode usernameFocusNode = FocusNode();
   FocusNode passwordFocusNode = FocusNode();
@@ -83,7 +83,8 @@ class _LoginPageState extends State<LoginPage> {
                           'Pandit Parjapati Milan',
                           style: TextStyle(
                             color: ConstHelper.whiteColor,
-                            fontSize: 25,
+                            fontSize: Get.width * 0.065,
+                            letterSpacing: 1,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -98,7 +99,8 @@ class _LoginPageState extends State<LoginPage> {
                               'Login',
                               style: TextStyle(
                                 color: ConstHelper.whiteColor,
-                                fontSize: 20,
+                                fontSize: Get.width * 0.055,
+                                letterSpacing: 1,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -106,7 +108,13 @@ class _LoginPageState extends State<LoginPage> {
                             TextFormField(
                               controller: txtUsername,
                               cursorColor: ConstHelper.whiteColor,
-                              style: TextStyle(color: ConstHelper.whiteColor,),
+                              keyboardType: TextInputType.number,
+                              maxLength: 10,
+                              style: TextStyle(
+                                fontSize: Get.width * 0.045,
+                                letterSpacing: 1,
+                                color: ConstHelper.whiteColor,
+                              ),
                               focusNode: usernameFocusNode,
                               validator: (value) {
                                 if(value!.trim().isEmpty)
@@ -117,6 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                               },
                               textInputAction: TextInputAction.next,
                               decoration: InputDecoration(
+                                counterText: "",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(50),
                                   borderSide: BorderSide(color: ConstHelper.whiteColor,),
@@ -131,14 +140,29 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 contentPadding: EdgeInsets.symmetric(horizontal: Get.width/30,),
                                 labelText: 'User ID',
-                                labelStyle: TextStyle(color: ConstHelper.cementColor,),
+                                errorStyle: TextStyle(
+                                  fontSize: Get.width * 0.04,
+                                  letterSpacing: 1,
+                                  color: ConstHelper.whiteColor,
+                                ),
+                                labelStyle: TextStyle(
+                                  fontSize: Get.width * 0.035,
+                                  letterSpacing: 1,
+                                  color: ConstHelper.whiteColor,
+                                ),
                                 prefixIcon: SizedBox(height: Get.width/20,width: Get.width/20,child: Center(child: SvgPicture.asset('assets/image/personSVG.svg',height: Get.width/20,width: Get.width/20,fit: BoxFit.contain,))),
                               ),
                             ),
                             SizedBox(height: Get.width/20,),
                             TextFormField(
                               controller: txtPassword,
-                              style: TextStyle(color: ConstHelper.whiteColor,),
+                              maxLength: 12,
+                              keyboardType: TextInputType.number,
+                              style: TextStyle(
+                                fontSize: Get.width * 0.045,
+                                letterSpacing: 1,
+                                color: ConstHelper.whiteColor,
+                              ),
                               cursorColor: ConstHelper.whiteColor,
                               focusNode: passwordFocusNode,
                               validator: (value) {
@@ -150,6 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                               },
                               obscureText: hidePassword.value,
                               decoration: InputDecoration(
+                                counterText: "",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(50),
                                   borderSide: BorderSide(color: ConstHelper.whiteColor,),
@@ -164,7 +189,16 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 contentPadding: EdgeInsets.symmetric(horizontal: Get.width/30,),
                                 labelText: 'Password',
-                                labelStyle: TextStyle(color: ConstHelper.cementColor,),
+                                errorStyle: TextStyle(
+                                  fontSize: Get.width * 0.04,
+                                  letterSpacing: 1,
+                                  color: ConstHelper.whiteColor,
+                                ),
+                                labelStyle: TextStyle(
+                                  fontSize: Get.width * 0.035,
+                                  letterSpacing: 1,
+                                  color: ConstHelper.whiteColor,
+                                ),
                                 prefixIcon: SizedBox(height: Get.width/20,width: Get.width/20,child: Center(child: SvgPicture.asset('assets/image/passwordSVG.svg',height: Get.width/20,width: Get.width/20,fit: BoxFit.contain,))),
                                 // suffixIcon: SizedBox(height: Get.width/20,width: Get.width/20,child: Center(child: SvgPicture.asset('assets/image/eyeNoVisibleSVG.svg',height: Get.width/20,width: Get.width/20,fit: BoxFit.contain,))),
                                 suffixIcon: IconButton(onPressed: (){
@@ -227,7 +261,7 @@ class _LoginPageState extends State<LoginPage> {
                                                 EasyLoading.dismiss();
                                                 homeController.advancedDrawerController = AdvancedDrawerController();
                                                 Get.off(const HomePage(),);
-                                                ConstHelper.successDialog(text: 'Login Successfully', seconds: 10,);
+                                                ConstHelper.successDialog(text: 'Login Successfully', seconds: 2,);
                                               }
                                             else
                                               {
@@ -261,11 +295,12 @@ class _LoginPageState extends State<LoginPage> {
                                 alignment: Alignment.center,
                                 padding: EdgeInsets.symmetric(vertical: Get.width/30,),
                                 child: Text(
-                                  'Login',
+                                  'Login'.toUpperCase(),
                                   style: TextStyle(
                                     color: ConstHelper.whiteColor,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                                    fontSize: Get.width * 0.05,
+                                    letterSpacing: 1,
                                   ),
                                 ),
                               ),
@@ -277,7 +312,8 @@ class _LoginPageState extends State<LoginPage> {
                                 style: TextStyle(
                                   color: ConstHelper.whiteColor,
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 16,
+                                  fontSize: Get.width * 0.035,
+                                  letterSpacing: 1,
                                 ),
                               ),
                             ),
@@ -307,13 +343,14 @@ class _LoginPageState extends State<LoginPage> {
                                   }
                                 },
                                 child: Text(
-                                  "Register Now!",
+                                  "Join & find love!",
                                   style: TextStyle(
                                     color: ConstHelper.orangeColor,
                                     decoration: TextDecoration.underline,
                                     decorationColor: ConstHelper.orangeColor,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: Get.width * 0.055,
+                                    letterSpacing: 1,
                                   ),
                                 ),
                               ),

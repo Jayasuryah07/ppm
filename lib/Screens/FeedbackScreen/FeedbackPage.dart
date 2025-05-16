@@ -20,13 +20,14 @@ class _FeedbackPageState extends State<FeedbackPage> {
   TextEditingController txtFeedback = TextEditingController();
   RxInt length = 0.obs;
   FocusNode focusNode = FocusNode();
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Feedback",style: TextStyle(fontSize: 20,color: ConstHelper.blackColor,fontWeight: FontWeight.bold,),),
+          title: Text("Feedback",style: TextStyle(fontSize: Get.width*0.05,letterSpacing:1,color: ConstHelper.blackColor,fontWeight: FontWeight.bold,),),
           leading: IconButton(
             onPressed: (){
               Get.back();
@@ -59,80 +60,91 @@ class _FeedbackPageState extends State<FeedbackPage> {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: Get.width/30,),
             child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(height: Get.width/20,),
-                  Center(
-                    child: Text(
-                      "Help us to improve",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 25,
+              child: Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    SizedBox(height: Get.width/20,),
+                    Center(
+                      child: Text(
+                        "Help Us Improve!",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: Get.width * 0.07,
+                            color: ConstHelper.blackColor,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1),
+                      ),
+                    ),
+                    SizedBox(height: Get.width/60,),
+                    Center(
+                      child: Text(
+                       "We’re Listening – Share Your Thoughts.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: Get.width * 0.04,
+                            color: ConstHelper.lightBlackColor,
+                            letterSpacing: 1),
+                      ),
+                    ),
+                    SizedBox(height: Get.width/20,),
+                  /*  Center(
+                      child: SvgPicture.asset(
+                        'assets/image/feedbackPageSVG.svg',
+                        height: Get.width/2,
+                        width: Get.width/2,
+                      ),
+                    ),
+                    SizedBox(height: Get.width/60,),*/
+                   /* Container(
+                      width: Get.width,
+                      decoration: BoxDecoration(
                         color: ConstHelper.blackColor,
-                        fontWeight: FontWeight.bold,
+                        borderRadius: BorderRadius.circular(6),
+                        boxShadow: [
+                          BoxShadow(
+                            color: ConstHelper.greyColor.withOpacity(0.5),
+                            offset: const Offset(0, 5),
+                            blurRadius: 1,
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                  SizedBox(height: Get.width/60,),
-                  Center(
-                    child: Text(
-                      "Let us know about your concern",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: ConstHelper.greyColor,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: Get.width/20,),
-                /*  Center(
-                    child: SvgPicture.asset(
-                      'assets/image/feedbackPageSVG.svg',
-                      height: Get.width/2,
-                      width: Get.width/2,
-                    ),
-                  ),
-                  SizedBox(height: Get.width/60,),*/
-                  Container(
-                    width: Get.width,
-                    decoration: BoxDecoration(
-                      color: ConstHelper.blackColor,
-                      borderRadius: BorderRadius.circular(6),
-                      boxShadow: [
-                        BoxShadow(
-                          color: ConstHelper.greyColor.withOpacity(0.5),
-                          offset: const Offset(0, 5),
-                          blurRadius: 1,
-                        ),
-                      ],
-                    ),
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.symmetric(vertical: Get.width/30,horizontal: Get.width/20,),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            "Feedback",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: ConstHelper.whiteColor,
-                              fontWeight: FontWeight.w500,
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.symmetric(vertical: Get.width/30,horizontal: Get.width/20,),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "Feedback",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: ConstHelper.whiteColor,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
-                        ),
-                        SvgPicture.asset('assets/image/dropDownSVG.svg',height: Get.width/22,width: Get.width/22,color: ConstHelper.whiteColor,),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: Get.width/20,),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: ConstHelper.cementColor.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(9),
-                    ),
-                    child: TextFormField(
+                          SvgPicture.asset('assets/image/dropDownSVG.svg',height: Get.width/22,width: Get.width/22,color: ConstHelper.whiteColor,),
+                        ],
+                      ),
+                    ),*/
+                    SizedBox(height: Get.width/20,),
+                    TextFormField(
                       controller: txtFeedback,
                       focusNode: focusNode,
+                      style: TextStyle(
+                        fontSize: Get.width * 0.04,
+                        color: ConstHelper.blackColor,
+                        letterSpacing: 1,
+                        height: 1.5,
+                        //color: ConstHelper.cementColor,
+                        fontWeight: FontWeight.normal,
+                      ),
+                      validator: (value) {
+                        if(value == null || value.isEmpty){
+                          return "Please enter feedback";
+                        }
+                        return null;
+                      },
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(9),
@@ -147,9 +159,14 @@ class _FeedbackPageState extends State<FeedbackPage> {
                           borderSide: BorderSide(color: ConstHelper.cementColor,),
                         ),
                         contentPadding: EdgeInsets.all(Get.width/25),
-                        hintText: 'Please write your feedback here.',
+                        hintText: 'Your feedback starts here...',
+                        fillColor:  ConstHelper.cementColor.withOpacity(0.2),
+                        filled: true,
                         hintStyle: TextStyle(
-                          color: ConstHelper.cementColor,
+                          fontSize: Get.width * 0.04,
+                          color: ConstHelper.lightBlackColor,
+                          //letterSpacing: 1,
+                          //color: ConstHelper.cementColor,
                           fontWeight: FontWeight.normal,
                         ),
                         counterText: '',
@@ -160,36 +177,30 @@ class _FeedbackPageState extends State<FeedbackPage> {
                         length.value = value.length;
                       },
                     ),
-                  ),
-                  SizedBox(height: Get.width/90,),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Obx(
-                      () => Text(
-                        '${length.value}/250 Words',
-                        style: TextStyle(
-                          color: ConstHelper.blackColor,
-                          fontSize: 14,
+                    SizedBox(height: Get.width/90,),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Obx(
+                        () => Text(
+                          '${length.value}/250',
+                          style: TextStyle(
+                            color: ConstHelper.blackColor,
+                            fontSize: Get.width * 0.04,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: Get.width/10,),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: Get.width/8,),
-                    child: InkWell(
-                      onTap: () async {
-                        focusNode.unfocus();
-                        if(txtFeedback.text.trim().isEmpty)
-                          {
-                            ConstHelper.errorDialog(text: 'Please enter the feedback...', seconds: 10,);
-                            focusNode.requestFocus();
-                          }
-                        else if(!(await ConstHelper.checkInternet()))
+                    SizedBox(height: Get.width/10,),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: Get.width/8,),
+                      child: InkWell(
+                        onTap: () async {
+                          focusNode.unfocus();
+                          if(formKey.currentState!.validate()){ if(!(await ConstHelper.checkInternet()))
                           {
                             ConstHelper.errorDialog(text: ConstHelper.internetMsg, seconds: 10,);
                           }
-                        else
+                          else
                           {
                             try {
                               EasyLoading.show(status: ConstHelper.pleaseWaitMsg,);
@@ -197,86 +208,90 @@ class _FeedbackPageState extends State<FeedbackPage> {
                               await ApiHelper.apiHelper.insertFeedback(profileId: '${DateTime.now().microsecond}', description: txtFeedback.text,).then((msg) {
                                 EasyLoading.dismiss();
                                 if(msg.trim().isEmpty)
-                                  {
-                                    txtFeedback.clear();
-                                    length.value = 0;
-                                    ConstHelper.errorDialog(text: ConstHelper.somethingErrorMsg, seconds: 10,);
-                                  }
+                                {
+                                  txtFeedback.clear();
+                                  length.value = 0;
+                                  ConstHelper.errorDialog(text: ConstHelper.somethingErrorMsg, seconds: 10,);
+                                }
                                 else
-                                  {
-                                    txtFeedback.clear();
-                                    length.value = 0;
-                                    Get.back();
-                                    homeController.advancedDrawerController.hideDrawer();
-                                    showToastWidget(
-                                      Container(
-                                        margin: const EdgeInsets.only(bottom: 50),
-                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.7),
-                                          // Semi-transparent black background
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(Icons.check_circle, color: Colors.white, size: 28),
-                                            const SizedBox(width: 14),
-                                            Flexible(
-                                              child: Text(
-                                                msg,
-                                                style: const TextStyle(
-                                                  color: Colors.white, // White text
-                                                  fontSize: 16.0,
-                                                ),
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                {
+                                  txtFeedback.clear();
+                                  length.value = 0;
+                                  Get.back();
+                                  homeController.advancedDrawerController.hideDrawer();
+                                  showToastWidget(
+                                    Container(
+                                      margin: const EdgeInsets.only(bottom: 50),
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.7),
+                                        // Semi-transparent black background
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
-                                      context: context,
-                                      duration: const Duration(seconds: 2),
-                                      // Short duration for simple toasts
-                                      animation: StyledToastAnimation.fade,
-                                      // Simple fade animation
-                                      reverseAnimation: StyledToastAnimation.fade,
-                                      position: StyledToastPosition.bottom,
-                                      // Toast appears at the bottom
-                                      animDuration: const Duration(milliseconds: 300),
-                                      curve: Curves.easeInOut,
-                                      reverseCurve: Curves.easeOut,
-                                    );
-                                  }
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.check_circle, color: Colors.white, size: 28),
+                                          const SizedBox(width: 14),
+                                          Flexible(
+                                            child: Text(
+                                              msg,
+                                              style:  TextStyle(
+                                                color: Colors.white, // White text
+                                                fontSize: Get.width * 0.045,
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    context: context,
+                                    duration: const Duration(seconds: 2),
+                                    // Short duration for simple toasts
+                                    animation: StyledToastAnimation.fade,
+                                    // Simple fade animation
+                                    reverseAnimation: StyledToastAnimation.fade,
+                                    position: StyledToastPosition.bottom,
+                                    // Toast appears at the bottom
+                                    animDuration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                    reverseCurve: Curves.easeOut,
+                                  );
+                                }
                               },);
                             } catch(error) {
                               EasyLoading.dismiss();
                               ConstHelper.errorDialog(text: ConstHelper.somethingErrorMsg, seconds: 10,);
                             }
+                          }}
+                            else{
+                            focusNode.requestFocus();
                           }
-                      },
-                      child: Container(
-                        width: Get.width,
-                        decoration: BoxDecoration(
-                          color: ConstHelper.orangeColor,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(vertical: Get.width/30,),
-                        child: Text(
-                          'Submit',
-                          style: TextStyle(
-                            color: ConstHelper.whiteColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                        },
+                        child: Container(
+                          width: Get.width,
+                          decoration: BoxDecoration(
+                            color: ConstHelper.orangeColor,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.symmetric(vertical: Get.width/30,),
+                          child: Text(
+                            'Send Feedback',
+                            style: TextStyle(
+                              color: ConstHelper.whiteColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: Get.width * 0.045,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: Get.width/20,),
-                ],
+                    SizedBox(height: Get.width/20,),
+                  ],
+                ),
               ),
             ),
           ),

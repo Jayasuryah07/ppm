@@ -70,7 +70,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Settings",style: TextStyle(fontSize: 20,color: ConstHelper.blackColor,fontWeight: FontWeight.bold,),),
+          title: Text("Settings",style: TextStyle(fontSize: Get.width*0.05,letterSpacing:1,color: ConstHelper.blackColor,fontWeight: FontWeight.bold,),),
           leading: IconButton(
             onPressed: (){
               Get.back();
@@ -111,14 +111,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       style: TextStyle(
                         color: ConstHelper.blackColor,
                         fontWeight: FontWeight.w500,
-                        fontSize: 18,
+                        fontSize: Get.width*0.05,
                       ),
                     ),
                     Text(
                       '  (In feet / inches)',
                       style: TextStyle(
                         color: ConstHelper.greyColor,
-                        fontSize: 14,
+                        fontSize: Get.width*0.04,
                       ),
                     ),
                   ],
@@ -133,7 +133,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 //       child: Text(
                 //         item,
                 //         style: TextStyle(
-                //           fontSize: 14,
+                //           fontSize: Get.width*0.04,
                 //           fontWeight: FontWeight.bold,
                 //           color: ConstHelper.orangeColor,
                 //         ),
@@ -196,14 +196,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 //             style: TextStyle(
                 //               color: ConstHelper.blackColor,
                 //               fontWeight: FontWeight.w500,
-                //               fontSize: 18,
+                //               fontSize: Get.width*0.05,
                 //             ),
                 //           ),
                 //           Text(
                 //             '(In feet / inches)',
                 //             style: TextStyle(
                 //               color: ConstHelper.greyColor,
-                //               fontSize: 14,
+                //               fontSize: Get.width*0.04,
                 //             ),
                 //           ),
                 //         ],
@@ -237,14 +237,14 @@ class _SettingsPageState extends State<SettingsPage> {
                             'Minimum Height',
                             style: TextStyle(
                               color: ConstHelper.blackColor,
-                              fontSize: 14,
+                              fontSize: Get.width*0.04,
                             ),
                           ),
                           SizedBox(height: Get.width/50,),
                           DropdownButtonHideUnderline(
                             child: DropdownButton2<String>(
                               isExpanded: true,
-                              hint: const Row(
+                              hint:  Row(
                                 children: [
                                   Icon(
                                     Icons.list,
@@ -258,7 +258,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     child: Text(
                                       'Select Age',
                                       style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: Get.width*0.04,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.yellow,
                                       ),
@@ -273,7 +273,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 child: Text(
                                   item,
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: Get.width*0.04,
                                     fontWeight: FontWeight.bold,
                                     color: ConstHelper.orangeColor,
                                   ),
@@ -337,14 +337,14 @@ class _SettingsPageState extends State<SettingsPage> {
                             'Maximum Height',
                             style: TextStyle(
                               color: ConstHelper.blackColor,
-                              fontSize: 14,
+                              fontSize: Get.width*0.04,
                             ),
                           ),
                           SizedBox(height: Get.width/50,),
                           DropdownButtonHideUnderline(
                             child: DropdownButton2<String>(
                               isExpanded: true,
-                              hint: const Row(
+                              hint:  Row(
                                 children: [
                                   Icon(
                                     Icons.list,
@@ -358,7 +358,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     child: Text(
                                       'Select Age',
                                       style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: Get.width*0.04,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.yellow,
                                       ),
@@ -373,7 +373,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 child: Text(
                                   item,
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: Get.width*0.04,
                                     fontWeight: FontWeight.bold,
                                     color: ConstHelper.orangeColor,
                                   ),
@@ -439,14 +439,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       style: TextStyle(
                         color: ConstHelper.blackColor,
                         fontWeight: FontWeight.w500,
-                        fontSize: 18,
+                        fontSize: Get.width*0.05,
                       ),
                     ),
                     Text(
                       '  (in Lakh)',
                       style: TextStyle(
                         color: ConstHelper.greyColor,
-                        fontSize: 14,
+                        fontSize: Get.width*0.04,
                       ),
                     ),
                   ],
@@ -458,14 +458,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       'Minimum 1 Lakh',
                       style: TextStyle(
                         color: ConstHelper.blackColor,
-                        fontSize: 14,
+                        fontSize: Get.width*0.04,
                       ),
                     ),
                     Text(
                       'Maximum 300 Lakh',
                       style: TextStyle(
                         color: ConstHelper.blackColor,
-                        fontSize: 14,
+                        fontSize: Get.width*0.04,
                       ),
                     ),
                   ],
@@ -536,14 +536,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       homeController.yearlyIncomeStart.value.toStringAsFixed(0) + " Lakh",
                       style: TextStyle(
                         color: ConstHelper.blackColor,
-                        fontSize: 14,
+                        fontSize: Get.width*0.04,
                       ),
                     ),
                     Text(
                       homeController.yearlyIncomeEnd.value.toStringAsFixed(0) + " Lakh",
                       style: TextStyle(
                         color: ConstHelper.blackColor,
-                        fontSize: 14,
+                        fontSize: Get.width*0.04,
                       ),
                     ),
                   ],
@@ -557,14 +557,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       style: TextStyle(
                         color: ConstHelper.blackColor,
                         fontWeight: FontWeight.w500,
-                        fontSize: 18,
+                        fontSize: Get.width*0.05,
                       ),
                     ),
                     Text(
                       '  (in years)',
                       style: TextStyle(
                         color: ConstHelper.greyColor,
-                        fontSize: 14,
+                        fontSize: Get.width*0.04,
                       ),
                     ),
                   ],
@@ -587,7 +587,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 //           child: Text(
                 //             'Select Age',
                 //             style: TextStyle(
-                //               fontSize: 14,
+                //               fontSize: Get.width*0.04,
                 //               fontWeight: FontWeight.bold,
                 //               color: Colors.yellow,
                 //             ),
@@ -602,7 +602,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 //       child: Text(
                 //         item,
                 //         style: TextStyle(
-                //           fontSize: 14,
+                //           fontSize: Get.width*0.04,
                 //           fontWeight: FontWeight.bold,
                 //           color: ConstHelper.orangeColor,
                 //         ),
@@ -661,14 +661,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       'Minimum 18 years',
                       style: TextStyle(
                         color: ConstHelper.blackColor,
-                        fontSize: 14,
+                        fontSize: Get.width*0.04,
                       ),
                     ),
                     Text(
                       'Maximum 50 years',
                       style: TextStyle(
                         color: ConstHelper.blackColor,
-                        fontSize: 14,
+                        fontSize: Get.width*0.04,
                       ),
                     ),
                   ],
@@ -755,14 +755,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       homeController.selectedAgeStart.value.toStringAsFixed(0) + " Year",
                       style: TextStyle(
                         color: ConstHelper.blackColor,
-                        fontSize: 14,
+                        fontSize: Get.width*0.04,
                       ),
                     ),
                     Text(
                       homeController.selectedAgeEnd.value.toStringAsFixed(0) + " Year",
                       style: TextStyle(
                         color: ConstHelper.blackColor,
-                        fontSize: 14,
+                        fontSize: Get.width*0.04,
                       ),
                     ),
                   ],
@@ -778,14 +778,14 @@ class _SettingsPageState extends State<SettingsPage> {
                           style: TextStyle(
                             color: ConstHelper.blackColor,
                             fontWeight: FontWeight.w500,
-                            fontSize: 18,
+                            fontSize: Get.width*0.05,
                           ),
                         ),
                         Text(
                           '  (to exclude)',
                           style: TextStyle(
                             color: ConstHelper.greyColor,
-                            fontSize: 14,
+                            fontSize: Get.width*0.04,
                           ),
                         ),
                       ],
@@ -802,7 +802,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Text(
                         item,
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: Get.width*0.04,
                           fontWeight: FontWeight.bold,
                           color: ConstHelper.orangeColor,
                         ),
@@ -910,18 +910,18 @@ class _SettingsPageState extends State<SettingsPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Advance Setting',
+                            'Advanced Setting',
                             style: TextStyle(
                               color: ConstHelper.blackColor,
                               fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                              fontSize: Get.width*0.04,
                             ),
                           ),
                           Text(
                             'Tap on plus icon to explore advance settings',
                             style: TextStyle(
                               color: ConstHelper.greyColor,
-                              fontSize: 10,
+                              fontSize: Get.width*0.03,
                             ),
                           ),
                         ],
@@ -960,7 +960,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               style: TextStyle(
                                 color: ConstHelper.blackColor,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 14,
+                                fontSize: Get.width*0.04,
                               ),
                             ),
                             GestureDetector(
@@ -996,7 +996,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   Text("Select All",style: TextStyle(
                                   color: homeController.selectAll.value ? ConstHelper.orangeColor : ConstHelper.blackColor,
                                      fontWeight: FontWeight.w500,
-                                     fontSize: 14,
+                                     fontSize: Get.width*0.04,
                                    ),),
                                 ],
                               ),
@@ -1040,7 +1040,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                       style: TextStyle(
                                         color: (homeController.educationDataList[index]['selected'] ?? false) ? ConstHelper.orangeColor : ConstHelper.cementColor,
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 14,
+                                        fontSize: Get.width*0.04,
                                       ),
                                     ),
                                   ),
@@ -1063,7 +1063,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           style: TextStyle(
                             color: ConstHelper.blackColor,
                             fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                            fontSize: Get.width*0.04,
                           ),
                         ),
                         SizedBox(height: Get.width/30,),
@@ -1087,7 +1087,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     style: TextStyle(
                                       color: homeController.maglikStatus.value.toLowerCase() == 'Yes'.toLowerCase() ? ConstHelper.whiteColor :ConstHelper.blackColor,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 12,
+                                      fontSize: Get.width*0.035,
                                     ),
                                   ),
                                 ),
@@ -1112,7 +1112,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     style: TextStyle(
                                       color: homeController.maglikStatus.value.toLowerCase() == 'No'.toLowerCase() ? ConstHelper.whiteColor :ConstHelper.blackColor,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 12,
+                                      fontSize: Get.width*0.035,
                                     ),
                                   ),
                                 ),
@@ -1137,7 +1137,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     style: TextStyle(
                                       color: homeController.maglikStatus.value.toLowerCase() == 'All'.toLowerCase() ? ConstHelper.whiteColor :ConstHelper.blackColor,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 12,
+                                      fontSize: Get.width*0.035,
                                     ),
                                   ),
                                 ),
@@ -1160,7 +1160,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           style: TextStyle(
                             color: ConstHelper.blackColor,
                             fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                            fontSize: Get.width*0.04,
                           ),
                         ),
                         SizedBox(height: Get.width/30,),
@@ -1184,7 +1184,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     style: TextStyle(
                                       color: homeController.marriedBeforeStatus.value.toLowerCase() == 'Yes'.toLowerCase() ? ConstHelper.whiteColor :ConstHelper.blackColor,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 12,
+                                      fontSize: Get.width*0.035,
                                     ),
                                   ),
                                 ),
@@ -1209,7 +1209,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     style: TextStyle(
                                       color: homeController.marriedBeforeStatus.value.toLowerCase() == 'No'.toLowerCase() ? ConstHelper.whiteColor :ConstHelper.blackColor,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 12,
+                                        fontSize: Get.width*0.035,
                                     ),
                                   ),
                                 ),
@@ -1234,7 +1234,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     style: TextStyle(
                                       color: homeController.marriedBeforeStatus.value.toLowerCase() == 'All'.toLowerCase() ? ConstHelper.whiteColor : ConstHelper.blackColor,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 12,
+                                      fontSize: Get.width*0.035,
                                     ),
                                   ),
                                 ),
@@ -1322,7 +1322,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             style: TextStyle(
                               color: ConstHelper.whiteColor,
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: Get.width*0.045,
                             ),
                           ),
                         ),
@@ -1365,7 +1365,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             style: TextStyle(
                               color: ConstHelper.whiteColor,
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: Get.width*0.045,
                             ),
                           ),
                         ),

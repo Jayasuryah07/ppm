@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:age_calculator/age_calculator.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -259,7 +260,7 @@ class _HomePageState extends State<HomePage> {
                                   'User ID : ',
                                   style: TextStyle(
                                     color: ConstHelper.whiteColor,
-                                    fontSize: 12,
+                                    fontSize: Get.width*0.035,
                                   ),
                                 ),
                                 Flexible(
@@ -271,7 +272,7 @@ class _HomePageState extends State<HomePage> {
                                     style: TextStyle(
                                       color: ConstHelper.orangeColor,
                                       fontWeight: FontWeight.w600,
-                                      fontSize: 12,
+                                      fontSize: Get.width*0.035,
                                     ),
                                   ),
                                 ),
@@ -286,7 +287,7 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(
                                 color: ConstHelper.whiteColor,
                                 fontWeight: FontWeight.w600,
-                                fontSize: 16,
+                                fontSize: Get.width*0.035,
                               ),
                             ),
                             // Text(
@@ -302,25 +303,29 @@ class _HomePageState extends State<HomePage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Reg No : ',
+                                  'Contact : ',
                                   style: TextStyle(
                                     color: ConstHelper.whiteColor,
-                                    fontSize: 12,
+                                    fontSize: Get.width * 0.035,
                                   ),
                                 ),
                                 Flexible(
                                   child: Text(
-                                    homeController.userData.value.profileMobile == null ||
-                                        homeController.userData.value.profileMobile!
+                                    homeController.userData.value
+                                        .profileMainContactNum ==
+                                        null ||
+                                        homeController.userData.value
+                                            .profileMainContactNum!
                                             .trim()
                                             .isEmpty
                                         ? ConstHelper.naMsg
-                                        : homeController.userData.value.profileMobile!
+                                        : homeController.userData.value
+                                        .profileMainContactNum!
                                         .trim(),
                                     style: TextStyle(
-                                      color: ConstHelper.orangeColor,
+                                      color: ConstHelper.whiteColor,
                                       fontWeight: FontWeight.w600,
-                                      fontSize: 12,
+                                      fontSize: Get.width * 0.035,
                                     ),
                                   ),
                                 ),
@@ -362,7 +367,7 @@ class _HomePageState extends State<HomePage> {
                             'Home',
                             style: TextStyle(
                               color: ConstHelper.whiteColor,
-                              fontSize: 16,
+                              fontSize: Get.width*0.045,
                             ),
                           ),
                         ),
@@ -398,7 +403,7 @@ class _HomePageState extends State<HomePage> {
                             'My Profile',
                             style: TextStyle(
                               color: ConstHelper.whiteColor,
-                              fontSize: 16,
+                              fontSize: Get.width*0.045,
                             ),
                           ),
                         ),
@@ -433,7 +438,7 @@ class _HomePageState extends State<HomePage> {
                             'My Shortlisted',
                             style: TextStyle(
                               color: ConstHelper.whiteColor,
-                              fontSize: 16,
+                              fontSize: Get.width*0.045,
                             ),
                           ),
                         ),
@@ -545,7 +550,7 @@ class _HomePageState extends State<HomePage> {
                             'Settings',
                             style: TextStyle(
                               color: ConstHelper.whiteColor,
-                              fontSize: 16,
+                              fontSize: Get.width*0.045,
                             ),
                           ),
                         ),
@@ -580,7 +585,7 @@ class _HomePageState extends State<HomePage> {
                             'Feedback',
                             style: TextStyle(
                               color: ConstHelper.whiteColor,
-                              fontSize: 16,
+                              fontSize: Get.width*0.045,
                             ),
                           ),
                         ),
@@ -615,7 +620,7 @@ class _HomePageState extends State<HomePage> {
                             'About Us',
                             style: TextStyle(
                               color: ConstHelper.whiteColor,
-                              fontSize: 16,
+                              fontSize: Get.width*0.045,
                             ),
                           ),
                         ),
@@ -628,8 +633,8 @@ class _HomePageState extends State<HomePage> {
                   InkWell(
                     onTap: () {
                       ConstHelper.constHelper.areYouSureWantAlertDialog(
-                        title: 'Logout?',
-                        description: 'Are you sure you want to logout?',
+                        title: 'Log out now?',
+                        description: 'Would you like to proceed with logging out?',
                         onPressed: () {
                           Get.back();
                           SharedPrefHelper.sharedPreferences.setBool(
@@ -660,7 +665,7 @@ class _HomePageState extends State<HomePage> {
                             'Logout',
                             style: TextStyle(
                               color: ConstHelper.whiteColor,
-                              fontSize: 16,
+                              fontSize: Get.width*0.045,
                             ),
                           ),
                         ),
@@ -792,7 +797,7 @@ class _HomePageState extends State<HomePage> {
                         Text(
                           "PP".tr,
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: Get.width*0.05,
                             color: ConstHelper.orangeColor,
                             fontWeight: FontWeight.bold,
                           ),
@@ -800,7 +805,7 @@ class _HomePageState extends State<HomePage> {
                         Text(
                           " Milan".tr,
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: Get.width*0.05,
                             color: ConstHelper.blackColor,
                             fontWeight: FontWeight.bold,
                           ),
@@ -863,14 +868,23 @@ class _HomePageState extends State<HomePage> {
                                 SizedBox(
                                   height: Get.height / 2.5,
                                 ),
-                                Center(
-                                  child: Text(
-                                    'Sorry, Data Not Available',
-                                    style: TextStyle(
-                                      color: ConstHelper.blackColor,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                Padding(
+                                  padding:  EdgeInsets.symmetric(horizontal: Get.width*0.04),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          'Oops! No data found. Try again later or contact admin.',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: ConstHelper.orangeDarkColor,
+                                            fontSize: Get.width * 0.05,
+                                            letterSpacing: 1,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -1081,10 +1095,11 @@ class _HomePageState extends State<HomePage> {
                                                         '${searchedMembersDataListGenderWise[index].id == null || searchedMembersDataListGenderWise[index].id == 0 ? 'Id not available' : searchedMembersDataListGenderWise[index].id!} - ${searchedMembersDataListGenderWise[index].name == null || searchedMembersDataListGenderWise[index].name!.trim().isEmpty ? ConstHelper.nameNotAvailableMsg : searchedMembersDataListGenderWise[index].name}',
                                                         style: TextStyle(
                                                           color: ConstHelper
-                                                              .blackColor,
+                                                              .orangeDarkColor,
                                                           fontWeight:
-                                                              FontWeight.w600,
-                                                          fontSize: 14,
+                                                          FontWeight.w600,
+                                                          fontSize:
+                                                          Get.width * 0.04,
                                                         ),
                                                       ),
                                                       // Text(
@@ -1118,9 +1133,11 @@ class _HomePageState extends State<HomePage> {
                                                                 'DOB : ',
                                                                 style:
                                                                     TextStyle(
-                                                                  color: ConstHelper
-                                                                      .blackColor,
-                                                                  fontSize: 12,
+                                                                      color: ConstHelper
+                                                                          .blackColor,
+                                                                      fontSize:
+                                                                      Get.width *
+                                                                          0.035,
                                                                 ),
                                                               ),
                                                               Text(
@@ -1135,12 +1152,14 @@ class _HomePageState extends State<HomePage> {
                                                                             searchedMembersDataListGenderWise[index].profileDateOfBirth!),
                                                                 style:
                                                                     TextStyle(
-                                                                  color: ConstHelper
-                                                                      .greyColor,
-                                                                  fontWeight:
+                                                                      color: ConstHelper
+                                                                          .greyColor,
+                                                                      fontWeight:
                                                                       FontWeight
                                                                           .w500,
-                                                                  fontSize: 12,
+                                                                      fontSize:
+                                                                      Get.width *
+                                                                          0.035,
                                                                 ),
                                                               ),
                                                             ],
@@ -1155,9 +1174,11 @@ class _HomePageState extends State<HomePage> {
                                                                 'EDU : ',
                                                                 style:
                                                                     TextStyle(
-                                                                  color: ConstHelper
-                                                                      .blackColor,
-                                                                  fontSize: 12,
+                                                                      color: ConstHelper
+                                                                          .blackColor,
+                                                                      fontSize:
+                                                                      Get.width *
+                                                                          0.035,
                                                                 ),
                                                               ),
                                                               Text(
@@ -1173,12 +1194,14 @@ class _HomePageState extends State<HomePage> {
                                                                         .profileEducation!,
                                                                 style:
                                                                     TextStyle(
-                                                                  color: ConstHelper
-                                                                      .greyColor,
-                                                                  fontWeight:
+                                                                      color: ConstHelper
+                                                                          .greyColor,
+                                                                      fontWeight:
                                                                       FontWeight
                                                                           .w500,
-                                                                  fontSize: 12,
+                                                                      fontSize:
+                                                                      Get.width *
+                                                                          0.035,
                                                                 ),
                                                               ),
                                                             ],
@@ -1192,7 +1215,9 @@ class _HomePageState extends State<HomePage> {
                                                             style: TextStyle(
                                                               color: ConstHelper
                                                                   .blackColor,
-                                                              fontSize: 12,
+                                                              fontSize:
+                                                              Get.width *
+                                                                  0.035,
                                                             ),
                                                           ),
                                                           Text(
@@ -1201,9 +1226,11 @@ class _HomePageState extends State<HomePage> {
                                                               color: ConstHelper
                                                                   .greyColor,
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              fontSize: 12,
+                                                              FontWeight
+                                                                  .w500,
+                                                              fontSize:
+                                                              Get.width *
+                                                                  0.035,
                                                             ),
                                                           ),
                                                         ],
@@ -1235,14 +1262,23 @@ class _HomePageState extends State<HomePage> {
                                 SizedBox(
                                   height: Get.height / 2.5,
                                 ),
-                                Center(
-                                  child: Text(
-                                    'Sorry, Data Not Available',
-                                    style: TextStyle(
-                                      color: ConstHelper.blackColor,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                Padding(
+                                  padding:  EdgeInsets.symmetric(horizontal: Get.width*0.04),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          'Oops! No data found. Try again later or contact admin.',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: ConstHelper.orangeDarkColor,
+                                            fontSize: Get.width * 0.05,
+                                            letterSpacing: 1,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -1460,10 +1496,11 @@ class _HomePageState extends State<HomePage> {
                                                         '${homeController.allMembersDataListGenderWise[index].id == null || homeController.allMembersDataListGenderWise[index].id == 0 ? 'Id not available' : homeController.allMembersDataListGenderWise[index].id!} - ${homeController.allMembersDataListGenderWise[index].name == null || homeController.allMembersDataListGenderWise[index].name!.trim().isEmpty ? ConstHelper.nameNotAvailableMsg : homeController.allMembersDataListGenderWise[index].name}',
                                                         style: TextStyle(
                                                           color: ConstHelper
-                                                              .blackColor,
+                                                              .orangeDarkColor,
                                                           fontWeight:
-                                                              FontWeight.w600,
-                                                          fontSize: 14,
+                                                          FontWeight.w600,
+                                                          fontSize:
+                                                          Get.width * 0.04,
                                                         ),
                                                       ),
                                                       // Text(
@@ -1500,9 +1537,11 @@ class _HomePageState extends State<HomePage> {
                                                                 'DOB : ',
                                                                 style:
                                                                     TextStyle(
-                                                                  color: ConstHelper
-                                                                      .blackColor,
-                                                                  fontSize: 12,
+                                                                      color: ConstHelper
+                                                                          .blackColor,
+                                                                      fontSize:
+                                                                      Get.width *
+                                                                          0.035,
                                                                 ),
                                                               ),
                                                               Text(
@@ -1517,12 +1556,14 @@ class _HomePageState extends State<HomePage> {
                                                                         .profileDateOfBirth!),
                                                                 style:
                                                                     TextStyle(
-                                                                  color: ConstHelper
-                                                                      .greyColor,
-                                                                  fontWeight:
+                                                                      color: ConstHelper
+                                                                          .greyColor,
+                                                                      fontWeight:
                                                                       FontWeight
                                                                           .w500,
-                                                                  fontSize: 12,
+                                                                      fontSize:
+                                                                      Get.width *
+                                                                          0.035,
                                                                 ),
                                                               ),
                                                             ],
@@ -1537,9 +1578,11 @@ class _HomePageState extends State<HomePage> {
                                                                 'EDU : ',
                                                                 style:
                                                                     TextStyle(
-                                                                  color: ConstHelper
-                                                                      .blackColor,
-                                                                  fontSize: 12,
+                                                                      color: ConstHelper
+                                                                          .blackColor,
+                                                                      fontSize:
+                                                                      Get.width *
+                                                                          0.035,
                                                                 ),
                                                               ),
                                                               Text(
@@ -1558,12 +1601,14 @@ class _HomePageState extends State<HomePage> {
                                                                         .profileEducation!,
                                                                 style:
                                                                     TextStyle(
-                                                                  color: ConstHelper
-                                                                      .greyColor,
-                                                                  fontWeight:
+                                                                      color: ConstHelper
+                                                                          .greyColor,
+                                                                      fontWeight:
                                                                       FontWeight
                                                                           .w500,
-                                                                  fontSize: 12,
+                                                                      fontSize:
+                                                                      Get.width *
+                                                                          0.035,
                                                                 ),
                                                               ),
                                                             ],
@@ -1577,7 +1622,9 @@ class _HomePageState extends State<HomePage> {
                                                             style: TextStyle(
                                                               color: ConstHelper
                                                                   .blackColor,
-                                                              fontSize: 12,
+                                                              fontSize:
+                                                              Get.width *
+                                                                  0.035,
                                                             ),
                                                           ),
                                                           Text(
@@ -1586,9 +1633,11 @@ class _HomePageState extends State<HomePage> {
                                                               color: ConstHelper
                                                                   .greyColor,
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              fontSize: 12,
+                                                              FontWeight
+                                                                  .w500,
+                                                              fontSize:
+                                                              Get.width *
+                                                                  0.035,
                                                             ),
                                                           ),
                                                         ],
@@ -1674,7 +1723,7 @@ class _HomePageState extends State<HomePage> {
                                   color: maleFemale.value
                                       ? ConstHelper.whiteColor
                                       : ConstHelper.orangeColor,
-                                  fontSize: 14,
+                                  fontSize: Get.width * 0.04,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -1722,7 +1771,7 @@ class _HomePageState extends State<HomePage> {
                                   color: maleFemale.value
                                       ? ConstHelper.orangeColor
                                       : ConstHelper.whiteColor,
-                                  fontSize: 14,
+                                  fontSize: Get.width * 0.04,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),

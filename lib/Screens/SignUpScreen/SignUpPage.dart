@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -142,32 +143,40 @@ class _SignUpPageState extends State<SignUpPage> {
                         SizedBox(height: Get.width/25,),
                         Center(
                           child: Text(
-                            'Pandit Parjapati Milan',
+                            'Pandit Parjapati Milan'.toUpperCase(),
                             style: TextStyle(
                               color: ConstHelper.whiteColor,
-                              fontSize: 25,
+                              fontSize: Get.width * 0.06,
+                              letterSpacing: 1,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                         SizedBox(height: Get.width/30,),
                         Text(
-                          'Register Now!',
+                          'Register Now & Find Love',
                           style: TextStyle(
                             color: ConstHelper.whiteColor,
-                            fontSize: 20,
+                            fontSize: Get.width * 0.045,
+                            letterSpacing: 1,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         SizedBox(height: Get.width/30,),
                         TextFormField(
-                          style: TextStyle(color: ConstHelper.whiteColor,),
                           controller: txtFullName,
                           focusNode: fullNameFocusNode,
+                          keyboardType: TextInputType.name,
+                          style: TextStyle(
+                            color: ConstHelper.whiteColor,
+                            fontSize: Get.width * 0.04,
+                            letterSpacing: 1,
+                          ),
+                          maxLength: 50,
                           validator: (value) {
                             if(value == null || value.trim().isEmpty)
                               {
-                                return "Please enter the full name";
+                                return "Please enter full name";
                               }
                             return null;
                           },
@@ -184,12 +193,16 @@ class _SignUpPageState extends State<SignUpPage> {
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton(
                                     dropdownColor: ConstHelper.lightBlackColor,
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_outlined,
+                                      color: ConstHelper.whiteColor,
+                                    ),
                                     hint: Text(
                                       'Select Gender',
                                       style: TextStyle(
-                                        color: ConstHelper.greyColor,
+                                        color: ConstHelper.whiteColor,
                                         fontWeight: FontWeight.normal,
-                                        fontSize: 12,
+                                        fontSize: Get.width * 0.035,
                                       ),
                                     ),
                                     items: [
@@ -198,8 +211,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                         child: Text(
                                           'Male',
                                           style: TextStyle(
-                                            color: ConstHelper.whiteColor,
-                                          ),
+                                              color: ConstHelper.whiteColor,
+                                              fontSize: Get.width * 0.04,
+                                              letterSpacing: 1)
                                         ),
                                       ),
                                       DropdownMenuItem(
@@ -208,6 +222,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                           'Female',
                                           style: TextStyle(
                                             color: ConstHelper.whiteColor,
+                                            fontSize: Get.width * 0.04,
+                                            letterSpacing: 1,
                                           ),
                                         ),
                                       ),
@@ -219,8 +235,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                     isExpanded: true,
                                     style: TextStyle(
                                       color: ConstHelper.whiteColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                                      fontSize: Get.width * 0.04,
+                                      letterSpacing: 1,
                                     ),
                                   ),
                                 ),
@@ -230,21 +246,56 @@ class _SignUpPageState extends State<SignUpPage> {
                             Expanded(
                               child: GestureDetector(
                                 onTap: () async {
-                                  EasyLoading.show(status: ConstHelper.pleaseWaitMsg,);
-                                  await Future.delayed(Duration(milliseconds: 200,),);
-                                  DateTime nowDateTime = await ConstHelper.getCurrentDateTime();
+                                  if (gender.value.isEmpty) {
+                                    Get.snackbar(
+                                      "Gender",
+                                      "Please select gender",
+                                      snackPosition: SnackPosition.BOTTOM,
+                                    );
+                                    return;
+                                  }
+                                  EasyLoading.show(
+                                      status: ConstHelper.pleaseWaitMsg);
+                                  await Future.delayed(
+                                      const Duration(milliseconds: 200));
+
+                                  DateTime nowDateTime =
+                                  await ConstHelper.getCurrentDateTime();
                                   EasyLoading.dismiss();
-                                  await showDatePicker(
+
+                                  // Determine minimum age based on gender
+                                  int minAge =
+                                  gender.value.toLowerCase() == 'female'
+                                      ? 18
+                                      : 21;
+
+                                  // Set lastDate as the latest allowed DOB (i.e., today - minAge)
+                                  DateTime lastAllowedDOB = DateTime(
+                                    nowDateTime.year - minAge,
+                                    nowDateTime.month,
+                                    nowDateTime.day,
+                                  );
+
+                                  // Set firstDate to 100 years before today
+                                  DateTime firstAllowedDOB = DateTime(
+                                    nowDateTime.year - 60,
+                                    nowDateTime.month,
+                                    nowDateTime.day,
+                                  );
+                                  print(lastAllowedDOB);
+                                  print(firstAllowedDOB);
+                                  DateTime? picked = await showDatePicker(
                                     context: context,
-                                    firstDate: DateTime(1900),
-                                    lastDate: DateTime.now(),
-                                    initialDate: dob.trim().isEmpty ? nowDateTime : DateTime.parse(dob.value),
-                                  ).then((value) {
-                                    if(value != null)
-                                      {
-                                        dob.value = value.toString();
-                                      }
-                                  },);
+                                    firstDate: firstAllowedDOB,
+                                    lastDate: lastAllowedDOB,
+                                    initialDate: dob.trim().isEmpty
+                                        ? lastAllowedDOB
+                                        : DateTime.parse(dob.value),
+                                  );
+
+                                  if (picked != null) {
+                                    dob.value = picked.toString();
+                                  }
                                 },
                                 child: InputDecorator(
                                   decoration: textFiledInputDecoration(labelText: 'Date of Birth',),
@@ -255,12 +306,16 @@ class _SignUpPageState extends State<SignUpPage> {
                                         dob.trim().isEmpty ? 'dd/mm/yyyy' : DateFormat('dd/MM/yyyy').format(DateTime.parse(dob.value)),
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
-                                          color: dob.trim().isEmpty ? ConstHelper.greyColor : ConstHelper.whiteColor,
-                                          fontWeight: dob.trim().isEmpty ? FontWeight.normal : FontWeight.bold,
-                                          fontSize: dob.trim().isEmpty ? 12 : null,
+                                          color: ConstHelper.whiteColor,
+                                           fontWeight: dob.trim().isEmpty
+                                            ? FontWeight.normal
+                                            : FontWeight.bold,
+                                  fontSize: dob.trim().isEmpty
+                                      ? Get.width * 0.035
+                                      : null,
                                         ),
                                       ),
-                                      Icon(Icons.calendar_month,color: dob.trim().isEmpty ? ConstHelper.greyColor : ConstHelper.whiteColor,size: Get.width/18,),
+                                      Icon(Icons.calendar_month,color: ConstHelper.whiteColor,size: Get.width/18,),
                                     ],
                                   ),
                                 ),
@@ -275,19 +330,43 @@ class _SignUpPageState extends State<SignUpPage> {
                             Expanded(
                               child: GestureDetector(
                                 onTap: () async {
-                                  EasyLoading.show(status: ConstHelper.pleaseWaitMsg,);
-                                  await Future.delayed(Duration(milliseconds: 200,),);
-                                  DateTime time = dobTime.isEmpty ? await ConstHelper.getCurrentDateTime() : DateFormat('hh:mm a').parse(dobTime.value);
+                                  EasyLoading.show(
+                                      status: ConstHelper.pleaseWaitMsg);
+                                  await Future.delayed(
+                                      const Duration(milliseconds: 200));
+
+                                  TimeOfDay initialTime;
+                                  if (dobTime.trim().isEmpty) {
+                                    EasyLoading.dismiss();
+                                    final now = DateTime.now();
+                                    initialTime = TimeOfDay(
+                                        hour: now.hour, minute: now.minute);
+                                  } else {
+                                    EasyLoading.dismiss();
+                                    // Use local context to parse formatted time
+                                    initialTime = TimeOfDay.fromDateTime(
+                                      DateFormat('hh:mm a')
+                                          .parse(dobTime.value),
+                                    );
+                                  }
+
                                   EasyLoading.dismiss();
-                                  await showTimePicker(
-                                    context: ConstHelper.navigatorKey.currentContext!,
-                                    initialTime: TimeOfDay(hour: time.hour,minute: time.minute)
-                                  ).then((value) {
-                                    if(value != null)
-                                    {
-                                      dobTime.value = value.format(context);
-                                    }
-                                  },);
+
+                                  final pickedTime = await showTimePicker(
+                                    context: ConstHelper
+                                        .navigatorKey.currentContext!,
+                                    initialTime: initialTime,
+                                  );
+
+                                  if (pickedTime != null) {
+                                    EasyLoading.dismiss();
+                                    dobTime.value = pickedTime.format(
+                                        context); // will give "10:41 AM"
+
+                                    /*   dobTime.value = pickedTime.format(
+                                        ConstHelper
+                                            .navigatorKey.currentContext!);*/
+                                  }
                                 },
                                 child: InputDecorator(
                                   decoration: textFiledInputDecoration(labelText: 'Time of Birth',),
@@ -298,13 +377,20 @@ class _SignUpPageState extends State<SignUpPage> {
                                         dobTime.trim().isEmpty ? '--:-- --' : DateFormat('hh:mm a').format(DateFormat('hh:mm a').parse(dobTime.value)),
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
-                                          color: dobTime.trim().isEmpty ? ConstHelper.greyColor : ConstHelper.whiteColor,
-                                          fontWeight: dobTime.trim().isEmpty ? FontWeight.normal : FontWeight.bold,
-                                          fontSize: dobTime.trim().isEmpty ? 12 : null,
+                                          color: ConstHelper.whiteColor,
+                                          fontWeight: dobTime.trim().isEmpty
+                                              ? FontWeight.normal
+                                              : FontWeight.bold,
+                                          fontSize: dobTime.trim().isEmpty
+                                              ? Get.width * 0.035
+                                              : null,
                                         ),
                                       ),
-                                      Icon(Icons.access_time_rounded,color: dobTime.trim().isEmpty ? ConstHelper.greyColor : ConstHelper.whiteColor,size: Get.width/18,),
-                                    ],
+                                      Icon(
+                                        Icons.access_time_rounded,
+                                        color: ConstHelper.whiteColor,
+                                        size: Get.width / 18,
+                                      ),                                    ],
                                   ),
                                 ),
                               ),
@@ -316,13 +402,17 @@ class _SignUpPageState extends State<SignUpPage> {
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton(
                                     dropdownColor: ConstHelper.lightBlackColor,
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_outlined,
+                                      color: ConstHelper.whiteColor,
+                                    ),
                                     focusColor: Colors.red,
                                     hint: Text(
                                       'Select Community',
                                       style: TextStyle(
-                                        color: ConstHelper.greyColor,
+                                        color: ConstHelper.whiteColor,
                                         fontWeight: FontWeight.normal,
-                                        fontSize: 12,
+                                        fontSize: Get.width * 0.035,
                                       ),
                                     ),
                                     items: homeController.communityDataList
@@ -332,6 +422,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                         (element['community_name'] ?? '').toString(),
                                         style: TextStyle(
                                           color: ConstHelper.whiteColor,
+                                          fontSize: Get.width * 0.04,
+                                          letterSpacing: 1,
                                         ),
                                       ),
                                     ))
@@ -371,8 +463,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                     isExpanded: true,
                                     style: TextStyle(
                                       color: ConstHelper.whiteColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                                      fontSize: Get.width * 0.04,
+                                      letterSpacing: 1,
                                     ),
                                   ),
                                 ),
@@ -386,100 +478,138 @@ class _SignUpPageState extends State<SignUpPage> {
                           children: [
                             Expanded(
                               child: InputDecorator(
-                                decoration: textFiledInputDecoration(labelText: 'Gotra',),
+                                decoration: textFiledInputDecoration(
+                                  labelText: 'Gotra',
+                                ),
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton<Map<dynamic, dynamic>>(
                                     dropdownColor: ConstHelper.lightBlackColor,
+
                                     focusColor: Colors.red,
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_outlined,
+                                      color: ConstHelper.whiteColor,
+                                    ),
                                     hint: Text(
                                       'Select Gotra',
                                       style: TextStyle(
-                                        color: ConstHelper.greyColor,
+                                        color: ConstHelper.whiteColor,
                                         fontWeight: FontWeight.normal,
-                                        fontSize: 12,
+                                        fontSize: Get.width * 0.035,
                                       ),
                                     ),
-                                    items: homeController.gotraDataListCommunityIdWise.map((element) {
-                                      return DropdownMenuItem<Map<dynamic, dynamic>>(
-                                        value: element, // Pass the full element as value
+                                    items: homeController
+                                        .gotraDataListCommunityIdWise
+                                        .map((element) {
+                                      return DropdownMenuItem<
+                                          Map<dynamic, dynamic>>(
+                                        value: element,
+                                        // Pass the full element as value
                                         child: Text(
-                                          (element['gotra_name'] ?? '').toString(),
+                                          (element['gotra_name'] ?? '')
+                                              .toString(),
                                           style: TextStyle(
                                             color: ConstHelper.whiteColor,
+                                            fontSize: Get.width * 0.04,
+                                            letterSpacing: 1,
                                           ),
                                         ),
                                       );
                                     }).toList(),
                                     onChanged: (value) async {
                                       if (value != null) {
-                                        selectedGotraData.value = value; // Explicitly handle the value as a Map
+                                        selectedGotraData.value =
+                                            value; // Explicitly handle the value as a Map
                                       }
                                     },
-                                    value: homeController.gotraDataListCommunityIdWise.firstWhere(
-                                          (element) => element['gotra_name'] == selectedGotraData['gotra_name'],
+                                    value: homeController
+                                        .gotraDataListCommunityIdWise
+                                        .firstWhere(
+                                          (element) =>
+                                      element['gotra_name'] ==
+                                          selectedGotraData['gotra_name'],
                                       orElse: () => null,
-                                    ) as Map<dynamic, dynamic>?, // Explicitly cast to Map
+                                    ) as Map<dynamic, dynamic>?,
+                                    // Explicitly cast to Map
                                     isExpanded: true,
                                     style: TextStyle(
                                       color: ConstHelper.whiteColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                                      fontSize: Get.width * 0.04,
+                                      letterSpacing: 1,
                                     ),
                                   ),
                                 ),
-
-
                               ),
                             ),
-                            SizedBox(width: Get.width/30,),
+                            SizedBox(
+                              width: Get.width / 30,
+                            ),
                             Expanded(
                               child: InputDecorator(
-                                decoration: textFiledInputDecoration(labelText: 'Education'),
+                                decoration: textFiledInputDecoration(
+                                    labelText: 'Education'),
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton(
                                     dropdownColor: ConstHelper.lightBlackColor,
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_outlined,
+                                      color: ConstHelper.whiteColor,
+                                    ),
                                     hint: Text(
                                       'Select Education',
                                       style: TextStyle(
-                                        color: ConstHelper.greyColor,
+                                        color: ConstHelper.whiteColor,
                                         fontWeight: FontWeight.normal,
-                                        fontSize: 12,
+                                        fontSize: Get.width * 0.035,
                                       ),
                                     ),
-                                    items: homeController.educationDataList.map((element) {
+                                    items: homeController.educationDataList
+                                        .map((element) {
                                       return DropdownMenuItem(
-                                        value: element['id'], // Use a unique identifier like 'id'
+                                        value: element['education_name'],
+                                        // Use a unique identifier like 'id'
                                         child: Text(
-                                          (element['education_name'] ?? '').toString(),
+                                          (element['education_name'] ?? '')
+                                              .toString(),
                                           style: TextStyle(
                                             color: ConstHelper.whiteColor,
+                                            fontSize: Get.width * 0.04,
+                                            letterSpacing: 1,
                                           ),
                                         ),
                                       );
                                     }).toList(),
                                     onChanged: (value) async {
                                       // Find the full map by ID and update selectedEducationData
-                                      selectedEducationData.value = homeController.educationDataList
-                                          .firstWhere((element) => element['id'] == value);
+                                      selectedEducationData.value =
+                                          homeController.educationDataList
+                                              .firstWhere((element) =>
+                                          element['education_name'] ==
+                                              value);
                                     },
-                                    value: selectedEducationData['id'], // Use the unique identifier for value
+                                    value:
+                                    selectedEducationData['education_name'],
+                                    // Use the unique identifier for value
                                     isExpanded: true,
                                     style: TextStyle(
                                       color: ConstHelper.whiteColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                                      fontSize: Get.width * 0.04,
+                                      letterSpacing: 1,
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-
                           ],
                         ),
                         SizedBox(height: Get.width/25,),
                         TextFormField(
                           controller: txtOccupation,
-                          style: TextStyle(color: ConstHelper.whiteColor,),
+                          style: TextStyle(
+                            fontSize: Get.width * 0.04,
+                            letterSpacing: 1,
+                            color: ConstHelper.whiteColor,
+                          ),
                           focusNode: occupationFocusNode,
                           validator: (value) {
                             if(value == null || value.trim().isEmpty)
@@ -495,7 +625,11 @@ class _SignUpPageState extends State<SignUpPage> {
                         SizedBox(height: Get.width/25,),
                         TextFormField(
                           controller: txtEmail,
-                          style: TextStyle(color: ConstHelper.whiteColor,),
+                          style: TextStyle(
+                            fontSize: Get.width * 0.04,
+                            letterSpacing: 1,
+                            color: ConstHelper.whiteColor,
+                          ),
                           focusNode: emailFocusNode,
                           validator: (value) {
                             if(value == null || value.trim().isEmpty)
@@ -518,7 +652,11 @@ class _SignUpPageState extends State<SignUpPage> {
                             Expanded(
                               child: TextFormField(
                                 controller: txtMobileNo,
-                                style: TextStyle(color: ConstHelper.whiteColor,),
+                                style: TextStyle(
+                                  fontSize: Get.width * 0.04,
+                                  letterSpacing: 1,
+                                  color: ConstHelper.whiteColor,
+                                ),
                                 focusNode: mobileNoFocusNode,
                                 validator: (value) {
                                   if(value == null || value.trim().isEmpty)
@@ -542,7 +680,11 @@ class _SignUpPageState extends State<SignUpPage> {
                             SizedBox(width: Get.width/30,),
                             Expanded(
                               child: TextFormField(
-                                style: TextStyle(color: ConstHelper.whiteColor,),
+                                style: TextStyle(
+                                  fontSize: Get.width * 0.04,
+                                  letterSpacing: 1,
+                                  color: ConstHelper.whiteColor,
+                                ),
                                 controller: txtWhatsappNo,
                                 focusNode: whatsappNoFocusNode,
                                 validator: (value) {
@@ -572,7 +714,9 @@ class _SignUpPageState extends State<SignUpPage> {
                           children: [
                             Expanded(
                               child: TextFormField(
-                                style: TextStyle(color: ConstHelper.whiteColor,),
+                                style: TextStyle(  fontSize: Get.width * 0.04,
+                                  letterSpacing: 1,
+                                  color: ConstHelper.whiteColor,),
                                 controller: txtMainContactNo,
                                 focusNode: mainContactNoFocusNode,
                                 validator: (value) {
@@ -597,9 +741,12 @@ class _SignUpPageState extends State<SignUpPage> {
                             SizedBox(width: Get.width/30,),
                             Expanded(
                               child: TextFormField(
-                                style: TextStyle(color: ConstHelper.whiteColor,),
+                                style: TextStyle(  fontSize: Get.width * 0.04,
+                                  letterSpacing: 1,
+                                  color: ConstHelper.whiteColor,),
                                 controller: txtFatherName,
                                 focusNode: fatherNameFocusNode,
+                                maxLength: 50,
                                 validator: (value) {
                                   if(value == null || value.trim().isEmpty)
                                   {
@@ -618,8 +765,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           'Height',
                           style: TextStyle(
                             color: ConstHelper.whiteColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            fontSize: Get.width * 0.04,
                           ),
                         ),
                         SizedBox(height: Get.width/30,),
@@ -631,12 +778,16 @@ class _SignUpPageState extends State<SignUpPage> {
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton(
                                     dropdownColor: ConstHelper.lightBlackColor,
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_outlined,
+                                      color: ConstHelper.whiteColor,
+                                    ),
                                     hint: Text(
                                       'Feet',
                                       style: TextStyle(
-                                        color: ConstHelper.greyColor,
+                                        color: ConstHelper.whiteColor,
                                         fontWeight: FontWeight.normal,
-                                        fontSize: 12,
+                                        fontSize: Get.width * 0.035,
                                       ),
                                     ),
                                     items: heightFeetList.map((element) => DropdownMenuItem(
@@ -655,8 +806,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                     isExpanded: true,
                                     style: TextStyle(
                                       color: ConstHelper.whiteColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                                      fontSize: Get.width * 0.04,
+                                      letterSpacing: 1,
                                     ),
                                   ),
                                 ),
@@ -669,12 +820,16 @@ class _SignUpPageState extends State<SignUpPage> {
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton(
                                     dropdownColor: ConstHelper.lightBlackColor,
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_outlined,
+                                      color: ConstHelper.whiteColor,
+                                    ),
                                     hint: Text(
                                       'Inch',
                                       style: TextStyle(
-                                        color: ConstHelper.greyColor,
+                                        color: ConstHelper.whiteColor,
                                         fontWeight: FontWeight.normal,
-                                        fontSize: 12,
+                                        fontSize: Get.width * 0.035,
                                       ),
                                     ),
                                     items: heightInchList.map((element) => DropdownMenuItem(
@@ -693,8 +848,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                     isExpanded: true,
                                     style: TextStyle(
                                       color: ConstHelper.whiteColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
+                                      fontSize: Get.width * 0.04,
+                                      letterSpacing: 1,
                                     ),
                                   ),
                                 ),
@@ -708,7 +863,9 @@ class _SignUpPageState extends State<SignUpPage> {
                           children: [
                             Expanded(
                               child: TextFormField(
-                                style: TextStyle(color: ConstHelper.whiteColor,),
+                                style: TextStyle( fontSize: Get.width * 0.04,
+                                  letterSpacing: 1,
+                                  color: ConstHelper.whiteColor,),
                                 controller: txtReferenceName,
                                 focusNode: referenceNameFocusNode,
                                 validator: (value) {
@@ -725,7 +882,9 @@ class _SignUpPageState extends State<SignUpPage> {
                             SizedBox(width: Get.width/30,),
                             Expanded(
                               child: TextFormField(
-                                style: TextStyle(color: ConstHelper.whiteColor,),
+                                style: TextStyle(fontSize: Get.width * 0.04,
+                                  letterSpacing: 1,
+                                  color: ConstHelper.whiteColor,),
                                 controller: txtReferenceMobileNo,
                                 focusNode: referenceMobileNoFocusNode,
                                 validator: (value) {
@@ -758,12 +917,16 @@ class _SignUpPageState extends State<SignUpPage> {
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton(
                                     dropdownColor: ConstHelper.lightBlackColor,
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_outlined,
+                                      color: ConstHelper.whiteColor,
+                                    ),
                                     hint: Text(
-                                      'Select one',
+                                      'Select',
                                       style: TextStyle(
-                                        color: ConstHelper.greyColor,
+                                        color: ConstHelper.whiteColor,
                                         fontWeight: FontWeight.normal,
-                                        fontSize: 12,
+                                        fontSize: Get.width * 0.035,
                                       ),
                                     ),
                                     items: physicalAbilityList.map((element) => DropdownMenuItem(
@@ -771,6 +934,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                       child: Text(
                                         '$element',
                                         style: TextStyle(
+                                          fontSize: Get.width * 0.04,
+                                          letterSpacing: 1,
                                           color: ConstHelper.whiteColor,
                                         ),
                                       ),
@@ -781,9 +946,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                     value: selectedPhysicalAbility.trim().isEmpty ? null : selectedPhysicalAbility.value,
                                     isExpanded: true,
                                     style: TextStyle(
+                                      fontSize: Get.width * 0.04,
+                                      letterSpacing: 1,
                                       color: ConstHelper.whiteColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
                                     ),
                                   ),
                                 ),
@@ -794,14 +959,19 @@ class _SignUpPageState extends State<SignUpPage> {
                               child: InputDecorator(
                                 decoration: textFiledInputDecoration(labelText: 'Have you been married before?',),
                                 child: DropdownButtonHideUnderline(
+
                                   child: DropdownButton(
                                     dropdownColor: ConstHelper.lightBlackColor,
+                                    icon: Icon(
+                                      Icons.arrow_drop_down_outlined,
+                                      color: ConstHelper.whiteColor,
+                                    ),
                                     hint: Text(
                                       'Select one',
                                       style: TextStyle(
-                                        color: ConstHelper.greyColor,
+                                        color: ConstHelper.whiteColor,
                                         fontWeight: FontWeight.normal,
-                                        fontSize: 12,
+                                        fontSize: Get.width * 0.035,
                                       ),
                                     ),
                                     items: marriedBeforeList.map((element) => DropdownMenuItem(
@@ -809,6 +979,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                       child: Text(
                                         '$element',
                                         style: TextStyle(
+                                          fontSize: Get.width * 0.04,
+                                          letterSpacing: 1,
                                           color: ConstHelper.whiteColor,
                                         ),
                                       ),
@@ -819,9 +991,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                     value: selectedMarriedBefore.trim().isEmpty ? null : selectedMarriedBefore.value,
                                     isExpanded: true,
                                     style: TextStyle(
+                                      fontSize: Get.width * 0.04,
+                                      letterSpacing: 1,
                                       color: ConstHelper.whiteColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
                                     ),
                                   ),
                                 ),
@@ -835,7 +1007,9 @@ class _SignUpPageState extends State<SignUpPage> {
                           children: [
                             Expanded(
                               child: TextFormField(
-                                style: TextStyle(color: ConstHelper.whiteColor,),
+                                style: TextStyle(fontSize: Get.width * 0.04,
+                                  letterSpacing: 1,
+                                  color: ConstHelper.whiteColor,),
                                 controller: txtWorkingCity,
                                 focusNode: workingCityFocusNode,
                                 validator: (value) {
@@ -852,7 +1026,9 @@ class _SignUpPageState extends State<SignUpPage> {
                             SizedBox(width: Get.width/30,),
                             Expanded(
                               child: TextFormField(
-                                style: TextStyle(color: ConstHelper.whiteColor,),
+                                style: TextStyle(fontSize: Get.width * 0.04,
+                                  letterSpacing: 1,
+                                  color: ConstHelper.whiteColor,),
                                 controller: txtPlaceOfBirth,
                                 focusNode: placeOfBirthFocusNode,
                                 validator: (value) {
@@ -871,7 +1047,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         SizedBox(height: Get.width/25,),
                         TextFormField(
                           controller: txtAddress,
-                          style: TextStyle(color: ConstHelper.whiteColor,),
+                          style: TextStyle(fontSize: Get.width * 0.04,
+                            letterSpacing: 1,
+                            color: ConstHelper.whiteColor,),
                           focusNode: addressFocusNode,
                           validator: (value) {
                             if(value == null || value.trim().isEmpty)
@@ -881,7 +1059,9 @@ class _SignUpPageState extends State<SignUpPage> {
                             return null;
                           },
                           textCapitalization: TextCapitalization.words,
+                          maxLength: 250,
                           decoration: InputDecoration(
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide(color: ConstHelper.whiteColor,),
@@ -899,17 +1079,32 @@ class _SignUpPageState extends State<SignUpPage> {
                             label: Text(
                               'Permanante Address',
                               maxLines: 2,
-                              style: TextStyle(color: ConstHelper.whiteColor,),
+                              style: TextStyle(fontSize: Get.width * 0.04,
+                                letterSpacing: 1,
+                                color: ConstHelper.whiteColor,),
                             ),
                             errorMaxLines: 5,
-                            counterText: '',
+                            errorStyle: TextStyle(
+                              color: ConstHelper.whiteColor,
+                              fontSize: Get.width * 0.035,
+                              letterSpacing: 1,
+                            ),
+                            counterStyle: TextStyle(
+                              color: ConstHelper.whiteColor,
+                              fontSize: Get.width * 0.035,
+                              letterSpacing: 1,
+                            ),
+                           // counterText: '',
                           ),
                           maxLines: 4,
                         ),
                         SizedBox(height: Get.width/25,),
                         TextFormField(
                           controller: txtImportantNote,
-                          style: TextStyle(color: ConstHelper.whiteColor,),
+                          maxLength: 500,
+                          style: TextStyle(fontSize: Get.width * 0.04,
+                            letterSpacing: 1,
+                            color: ConstHelper.whiteColor,),
                           focusNode: importantNoteFocusNode,
                           validator: (value) {
                             if(value == null || value.trim().isEmpty)
@@ -920,6 +1115,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           },
                           textCapitalization: TextCapitalization.words,
                           decoration:  InputDecoration(
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                               borderSide: BorderSide(color: ConstHelper.whiteColor,),
@@ -937,20 +1134,33 @@ class _SignUpPageState extends State<SignUpPage> {
                             label: Text(
                               'Important Note',
                               maxLines: 2,
-                              style: TextStyle(color: ConstHelper.whiteColor,),
+                              style: TextStyle(fontSize: Get.width * 0.04,
+                                letterSpacing: 1,
+                                color: ConstHelper.whiteColor,),
                             ),
                             errorMaxLines: 5,
-                            counterText: '',
+                            errorStyle: TextStyle(
+                              color: ConstHelper.whiteColor,
+                              fontSize: Get.width * 0.035,
+                              letterSpacing: 1,
+                            ),
+                            counterStyle: TextStyle(
+                              color: ConstHelper.whiteColor,
+                              fontSize: Get.width * 0.035,
+                              letterSpacing: 1,
+                            ),
+                          //  counterText: '',
                           ),
                           maxLines: 4,
                         ),
                         SizedBox(height: Get.width/30,),
                         Text(
-                          'Photo',
+                          'Photo'.toUpperCase(),
                           style: TextStyle(
+                            fontSize: Get.width * 0.04,
+                            letterSpacing: 1,
                             color: ConstHelper.whiteColor,
                             fontWeight: FontWeight.w600,
-                            fontSize: 14,
                           ),
                         ),
                         SizedBox(height: Get.width/30,),
@@ -1011,7 +1221,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                                       style: TextStyle(
                                                         color: ConstHelper.blackColor,
                                                         fontWeight: FontWeight.w600,
-                                                        fontSize: 18,
+                                                        fontSize: Get.width*0.045,
                                                       ),
                                                     ),
                                                     SizedBox(height: Get.width/30,),
@@ -1033,7 +1243,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                                                 style: TextStyle(
                                                                   color: ConstHelper.orangeColor,
                                                                   fontWeight: FontWeight.w500,
-                                                                  fontSize: 14,
+                                                                  fontSize: Get.width*0.04,
                                                                 ),
                                                               ),
                                                             ],
@@ -1056,7 +1266,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                                                 style: TextStyle(
                                                                   color: ConstHelper.orangeColor,
                                                                   fontWeight: FontWeight.w500,
-                                                                  fontSize: 14,
+                                                                  fontSize: Get.width*0.04,
                                                                 ),
                                                               ),
                                                             ],
@@ -1090,7 +1300,6 @@ class _SignUpPageState extends State<SignUpPage> {
                         SizedBox(height: Get.width/15,),
                         GestureDetector(
                           onTap: () async {
-                            EasyLoading.show(status: ConstHelper.pleaseWaitMsg,);
                             await Future.delayed(Duration(milliseconds: 200,),);
                             fullNameFocusNode.unfocus();
                             occupationFocusNode.unfocus();
@@ -1238,6 +1447,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 }
                                 else if(formKey.currentState!.validate())
                                 {
+                                  EasyLoading.show(status: ConstHelper.pleaseWaitMsg,);
                                   try {
                                     MembersDataModel membersDataModel = MembersDataModel(
                                       name: txtFullName.text,
@@ -1276,7 +1486,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                           // await Future.delayed(Duration(milliseconds: 300,),);
                                           Get.back();
                                           EasyLoading.dismiss();
-                                          ConstHelper.successDialog(text: value['msg'] ?? 'Your profile is created successfully.', seconds: 10,);
+                                          ConstHelper.successDialog(text: value['msg'] ?? 'Your profile is created successfully.', seconds: 3,);
                                         }
                                         else
                                         {
@@ -1312,12 +1522,48 @@ class _SignUpPageState extends State<SignUpPage> {
                               style: TextStyle(
                                 color: ConstHelper.whiteColor,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: Get.width*0.045,
                               ),
                             ),
                           ),
                         ),
                         SizedBox(height: Get.width/25,),
+                        Padding(
+                          padding:  EdgeInsets.symmetric(vertical: Get.height*0.02),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Already registered? ",
+                                style: TextStyle(
+                                  color: ConstHelper.whiteColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: Get.width * 0.04,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Get.back();
+                                },
+                                child: Text(
+                                  "Log in now!",
+                                  style: TextStyle(
+                                    color: ConstHelper.orangeColor,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: ConstHelper.orangeColor,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: Get.width * 0.055,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: Get.width/25,),
+
                       ],
                     ),
                   ),
@@ -1347,11 +1593,24 @@ class _SignUpPageState extends State<SignUpPage> {
         borderSide: BorderSide(color: ConstHelper.whiteColor,),
       ),
       contentPadding: EdgeInsets.symmetric(horizontal: Get.width/30,),
-      labelStyle: TextStyle(color: ConstHelper.cementColor,),
+      labelStyle: TextStyle(
+        color: ConstHelper.whiteColor,
+        fontSize: Get.width * 0.04,
+        letterSpacing: 1,
+      ),
       label: Text(
         labelText,
         maxLines: 2,
-        style: TextStyle(color: ConstHelper.whiteColor,),
+        style: TextStyle(
+          color: ConstHelper.whiteColor,
+          fontSize: Get.width * 0.035,
+          // letterSpacing: 1,
+        ),
+      ),
+      errorStyle: TextStyle(
+        fontSize: Get.width * 0.035,
+        letterSpacing: 1,
+        color: ConstHelper.whiteColor,
       ),
       errorMaxLines: 5,
       counterText: '',

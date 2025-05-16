@@ -37,6 +37,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor:ConstHelper.orangeColor,
+      statusBarIconBrightness: Brightness.light,
+    ));
     return GetMaterialApp(
       title: 'PP Milan',
       debugShowCheckedModeBanner: false,

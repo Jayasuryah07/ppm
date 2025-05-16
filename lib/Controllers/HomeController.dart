@@ -54,4 +54,10 @@ class HomeController extends GetxController {
     userData.value = userDataWithToken.value.user ?? User();
   }
 
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    getUserData();
+    super.onInit();
+  }
 }
