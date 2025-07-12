@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -225,13 +227,6 @@ class _LoginPageState extends State<LoginPage> {
                                 await Future.delayed(Duration(milliseconds: 200,),);
                                 usernameFocusNode.unfocus();
                                 passwordFocusNode.unfocus();
-                                if(!(await ConstHelper.checkInternet()))
-                                {
-                                  EasyLoading.dismiss();
-                                  ConstHelper.errorDialog(text: ConstHelper.internetMsg, seconds: 10,);
-                                }
-                                else
-                                {
                                   if(txtUsername.text.trim().isEmpty)
                                   {
                                     EasyLoading.dismiss();
@@ -245,9 +240,25 @@ class _LoginPageState extends State<LoginPage> {
 
                                   if(formKey.currentState!.validate())
                                   {
-                                   // try {
-                                      homeController.firebaseFCMToken.value = await FirebaseHelper.firebaseHelper.getFirebaseToken();
-                                      log("Token : ${await FirebaseHelper.firebaseHelper.getFirebaseToken()}");
+                                   try {
+                                     if(!(await ConstHelper.checkInternet()))
+                                     {
+                                       EasyLoading.dismiss();
+                                       ConstHelper.errorDialog(text: ConstHelper.internetMsg, seconds: 10,);
+                                       return;
+                                     }
+                                     var token;
+                                     if (Platform.isIOS) {
+                                       token = await FirebaseMessaging.instance
+                                           .getAPNSToken();
+                                       debugPrint('APNS Token: $token');
+                                     } else {
+                                       FirebaseMessaging messaging =
+                                           FirebaseMessaging.instance;
+                                       token = await messaging.getToken();
+                                       debugPrint('APNS Token: $token');
+                                     }
+                                      homeController.firebaseFCMToken.value = token??"";
                                       log("Token : ${homeController.firebaseFCMToken.value}");
                                       await ApiHelper.apiHelper.loginUser(profileId: txtUsername.text.toString(), password: txtPassword.text.trim(), deviceId: homeController.firebaseFCMToken.value,).then((userData) async {
                                         if(userData.isNotEmpty)
@@ -275,16 +286,16 @@ class _LoginPageState extends State<LoginPage> {
                                             ConstHelper.errorDialog(text: 'Unauthorised.', seconds: 10,);
                                           }
                                       },);
-                                   /* } catch(error) {
+                                    } catch(error) {
                                       EasyLoading.dismiss();
                                       ConstHelper.errorDialog(text: ConstHelper.somethingErrorMsg, seconds: 10,);
-                                    }*/
+                                    }
                                   }
                                   else
                                   {
                                     EasyLoading.dismiss();
                                   }
-                                }
+
                               },
                               child: Container(
                                 width: Get.width,

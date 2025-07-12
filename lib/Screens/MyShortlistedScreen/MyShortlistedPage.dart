@@ -233,7 +233,7 @@ class _MyShortlistedPageState extends State<MyShortlistedPage> {
                                                 homeController.allShortlistedDataList[index].profileDateOfBirth == null || homeController.allShortlistedDataList[index].profileDateOfBirth!.year <= 0 ? 'N/A' : DateFormat('dd | MMM | yyyy').format(homeController.allShortlistedDataList[index].profileDateOfBirth!),
                                                 style: TextStyle(
                                                   color: ConstHelper
-                                                      .greyColor,
+                                                      .blackColor.withOpacity(0.9),
                                                   fontWeight:
                                                   FontWeight
                                                       .w500,
@@ -262,7 +262,7 @@ class _MyShortlistedPageState extends State<MyShortlistedPage> {
                                                 homeController.allShortlistedDataList[index].profileEducation == null || homeController.allShortlistedDataList[index].profileEducation!.trim().isEmpty ? 'N/A' : homeController.allShortlistedDataList[index].profileEducation!,
                                                 style: TextStyle(
                                                   color: ConstHelper
-                                                      .greyColor,
+                                                      .blackColor.withOpacity(0.9),
                                                   fontWeight:
                                                   FontWeight
                                                       .w500,
@@ -276,6 +276,7 @@ class _MyShortlistedPageState extends State<MyShortlistedPage> {
                                         ],
                                       ),
                                       Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             'City : ',
@@ -287,7 +288,7 @@ class _MyShortlistedPageState extends State<MyShortlistedPage> {
                                                   0.035,
                                             ),
                                           ),
-                                          Text(
+                                          Expanded(child: Text(
                                             (() {
                                               final city = homeController.allShortlistedDataList[index].profileWorkingCity?.trim();
                                               final address = homeController.allShortlistedDataList[index].profilePermanentAddress?.trim();
@@ -303,11 +304,13 @@ class _MyShortlistedPageState extends State<MyShortlistedPage> {
                                               }
                                             })(),
                                             style: TextStyle(
-                                              color: ConstHelper.greyColor,
+                                              color: ConstHelper
+                                                  .blackColor.withOpacity(0.9),
                                               fontWeight: FontWeight.w500,
                                               fontSize: Get.width * 0.035,
                                             ),
-                                          ),
+                                          ),),
+
 
                                         ],
                                       ),

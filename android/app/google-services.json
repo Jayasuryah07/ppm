@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "787219854027",
-    "project_id": "ppmilan-77fd2",
-    "storage_bucket": "ppmilan-77fd2.firebasestorage.app"
+    "project_number": "599295240072",
+    "project_id": "pp-milan",
+    "storage_bucket": "pp-milan.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:787219854027:android:e26108dddd780a17a3a14e",
+        "mobilesdk_app_id": "1:599295240072:android:6f560f191411e8e35bbc3d",
         "android_client_info": {
-          "package_name": "com.ppmilan.agsolutions"
+          "package_name": "com.ppm.agsolutions"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAuJ6X5u24c11z90nDHOIwJ-SqCaz14QF4"
+          "current_key": "AIzaSyBGRV8gbm8T-3Vtub6LLNMC_bxgBG7HcDM"
         }
       ],
       "services": {

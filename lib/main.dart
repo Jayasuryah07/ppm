@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -15,15 +18,36 @@ import 'Utils/SharedPrefHelper.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: FirebaseOptions(
-      apiKey: 'AIzaSyAuJ6X5u24c11z90nDHOIwJ-SqCaz14QF4',
-      appId: '1:787219854027:android:e26108dddd780a17a3a14e',
-      messagingSenderId: '787219854027',
-      projectId: 'ppmilan-77fd2',
-      storageBucket: 'ppmilan-77fd2.firebasestorage.app',
-    ),
-  );
+  try {
+    if (Platform.isAndroid) {
+      await Firebase.initializeApp(
+        options: FirebaseOptions(
+          apiKey: 'AIzaSyBGRV8gbm8T-3Vtub6LLNMC_bxgBG7HcDM',
+          appId: '1:599295240072:android:6f560f191411e8e35bbc3d',
+          messagingSenderId: '599295240072',
+          projectId: 'pp-milan',
+          storageBucket: 'pp-milan.firebasestorage.app',
+        ),
+      );
+    } else {
+      await Firebase.initializeApp(
+        options: const FirebaseOptions(
+          apiKey: 'AIzaSyDqiEU-q24qR7HHRojofr9JE3TgBjTy_AI',
+          appId: '1:599295240072:ios:01a4043d8e42bab55bbc3d',
+          messagingSenderId: '599295240072',
+          projectId: 'ppmilan-bngags',
+          storageBucket: 'pp-milan.firebasestorage.app',
+          iosClientId: '599295240072-osbohkk9gfscs67s9iqdai750qev0gsf.apps.googleusercontent.com',
+          iosBundleId: 'com.ppm.agsolutions',
+        ),
+      );
+    }
+    await FirebaseMessaging.instance.requestPermission();
+    print("✅ Firebase initialized successfully");
+  } catch (e) {
+    print("❌ Firebase Initialization Failed: $e");
+  }
+
   await SharedPrefHelper.sharedPrefHelper.initSharedPref();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -37,9 +61,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
       statusBarColor:ConstHelper.orangeColor,
       statusBarIconBrightness: Brightness.light,
+      systemNavigationBarIconBrightness: Brightness.light,
+      systemNavigationBarColor:ConstHelper.orangeColor,
     ));
     return GetMaterialApp(
       title: 'PP Milan',

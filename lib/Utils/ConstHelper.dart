@@ -6,6 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:ntp/ntp.dart';
 
@@ -44,13 +45,18 @@ class ConstHelper {
 
 
   /// Internet Connection Checking
-
   static Future<bool> checkInternet() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+
+    if (connectivityResult.first == ConnectivityResult.none) return false;
+
     try {
-      var connectivityResultList = await Connectivity().checkConnectivity();
-      return connectivityResultList.where((connectivityResult) => (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi)).toList().isNotEmpty;
-    }
-    catch(error) {
+      final result =
+      await http.get(Uri.parse('https://www.google.com')).timeout(
+        const Duration(seconds: 5),
+      );
+      return result.statusCode == 200;
+    } catch (_) {
       return false;
     }
   }

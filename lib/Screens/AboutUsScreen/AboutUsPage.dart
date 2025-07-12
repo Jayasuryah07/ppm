@@ -142,6 +142,18 @@ class _AboutUsPageState extends State<AboutUsPage> {
                 imageIconData: Icons.public,
                 isIcon: true,
                 context: context,
+                onTap: () async {
+                  final String url =
+                      "https://ppmilan.in";
+
+                  // Parse the URL
+                  final Uri uri = Uri.parse(url);
+                  await launchUrl(
+                    uri,
+                    mode: LaunchMode
+                        .externalApplication, // Ensures it opens in a browser like Chrome
+                  );
+                },
               ),
               commonAboutUsWidget(
                 title: "Bangalore",

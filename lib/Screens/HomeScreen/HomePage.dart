@@ -911,24 +911,26 @@ class _HomePageState extends State<HomePage> {
                                       );
                                     } else {
                                       homeController.selectedMembersData.value =
-                                          searchedMembersDataListGenderWise[
-                                              index];
+                                      searchedMembersDataListGenderWise[
+                                      index];
                                       List<MembersDataModel>
-                                          allShortlistedDataList =
-                                          await ApiHelper.apiHelper
-                                              .getAllShortlistedDataList();
+                                      allShortlistedDataList =
+                                      await ApiHelper.apiHelper
+                                          .getAllShortlistedDataList();
                                       homeController.profileShorted.value =
                                           allShortlistedDataList
                                               .where(
                                                 (element) =>
-                                                    element.id ==
-                                                    homeController
-                                                        .selectedMembersData
-                                                        .value
-                                                        .id,
-                                              )
+                                            element.id ==
+                                                homeController
+                                                    .selectedMembersData
+                                                    .value
+                                                    .id,
+                                          )
                                               .toList()
                                               .isNotEmpty;
+                                      homeController.selectedMembersData.value = await ApiHelper.apiHelper
+                                          .getSelectedembersDataList(id: searchedMembersDataListGenderWise[index].id.toString());
                                       Get.to(
                                         MembersDataShowPage(),
                                         transition: Transition.fadeIn,
@@ -936,7 +938,6 @@ class _HomePageState extends State<HomePage> {
                                       EasyLoading.dismiss();
                                     }
 
-                                    EasyLoading.dismiss();
                                   },
                                   child: Container(
                                     width: Get.width,
@@ -1152,8 +1153,8 @@ class _HomePageState extends State<HomePage> {
                                                                             searchedMembersDataListGenderWise[index].profileDateOfBirth!),
                                                                 style:
                                                                     TextStyle(
-                                                                      color: ConstHelper
-                                                                          .greyColor,
+                                                                      color:  ConstHelper
+                                                                        .blackColor.withOpacity(0.9),
                                                                       fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -1194,8 +1195,8 @@ class _HomePageState extends State<HomePage> {
                                                                         .profileEducation!,
                                                                 style:
                                                                     TextStyle(
-                                                                      color: ConstHelper
-                                                                          .greyColor,
+                                                                         color: ConstHelper
+                                                                        .blackColor.withOpacity(0.9),
                                                                       fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -1223,8 +1224,8 @@ class _HomePageState extends State<HomePage> {
                                                           Text(
                                                             '${searchedMembersDataListGenderWise[index].profileWorkingCity == null || searchedMembersDataListGenderWise[index].profileWorkingCity!.trim().isEmpty ? '' : searchedMembersDataListGenderWise[index].profileWorkingCity!}',
                                                             style: TextStyle(
-                                                              color: ConstHelper
-                                                                  .greyColor,
+                                                              color:   ConstHelper
+                                                                .blackColor.withOpacity(0.9),
                                                               fontWeight:
                                                               FontWeight
                                                                   .w500,
@@ -1557,7 +1558,7 @@ class _HomePageState extends State<HomePage> {
                                                                 style:
                                                                     TextStyle(
                                                                       color: ConstHelper
-                                                                          .greyColor,
+                                                                          .blackColor.withOpacity(0.9),
                                                                       fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -1602,7 +1603,7 @@ class _HomePageState extends State<HomePage> {
                                                                 style:
                                                                     TextStyle(
                                                                       color: ConstHelper
-                                                                          .greyColor,
+                                                                          .blackColor.withOpacity(0.9),
                                                                       fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -1630,8 +1631,8 @@ class _HomePageState extends State<HomePage> {
                                                           Text(
                                                             '${homeController.allMembersDataListGenderWise[index].profileWorkingCity == null || homeController.allMembersDataListGenderWise[index].profileWorkingCity!.trim().isEmpty ? '' : homeController.allMembersDataListGenderWise[index].profileWorkingCity!}',
                                                             style: TextStyle(
-                                                              color: ConstHelper
-                                                                  .greyColor,
+                                                              color:   ConstHelper
+                                                                .blackColor.withOpacity(0.9),
                                                               fontWeight:
                                                               FontWeight
                                                                   .w500,

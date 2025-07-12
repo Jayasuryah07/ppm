@@ -19,7 +19,7 @@
         <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
         <option name="modules">
           <set>
-            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/connectivity_plus-6.1.0/android" />
+            <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/connectivity_plus-6.1.4/android" />
             <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_core-3.4.0/android" />
             <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/firebase_messaging-15.1.0/android" />
             <option value="$USER_HOME$/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.19/android" />

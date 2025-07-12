@@ -45,6 +45,7 @@ String convertTo12HourFormat(String time24) {
   final DateFormat outputFormat = DateFormat("hh:mm a");
   return outputFormat.format(dateTime);
 }
+
 class CommonTextField extends StatelessWidget {
   final String label;
   final String subLabel;
@@ -167,7 +168,7 @@ class _EditprofilepageState extends State<Editprofilepage> {
   @override
   Widget build(BuildContext context) {
     print(homeController.communityDataList);
-    return Scaffold(
+    return SafeArea(child: Scaffold(
       appBar: AppBar(
         title: Text("Edit Profile",style:TextStyle(fontSize: Get.width*0.05,letterSpacing:1,color: ConstHelper.blackColor,fontWeight: FontWeight.bold,),),
         leading: IconButton(
@@ -415,10 +416,10 @@ class _EditprofilepageState extends State<Editprofilepage> {
                     SizedBox(width: Get.width/30,),
                     Expanded(
                       child: CommonTextField(
-                          label: "Height",
-                          subLabel: convertInchesToFeetInch(int.parse(homeController
-                              .userData.value.profileHeight?.toString()??"0")
-                              ),),),
+                        label: "Height",
+                        subLabel: convertInchesToFeetInch(int.parse(homeController
+                            .userData.value.profileHeight?.toString()??"0")
+                        ),),),
                   ],
                 ),
                 SizedBox(height: Get.width/60,),
@@ -480,14 +481,14 @@ class _EditprofilepageState extends State<Editprofilepage> {
                             style: TextStyle(
                               color: ConstHelper.blackColor,
                               fontWeight: FontWeight.w600,
-                               fontSize: Get.width * 0.04,
+                              fontSize: Get.width * 0.04,
                             ),
                           ),
                           Container(
                             height: 40,
                             child: TextFormField(
                               style: TextStyle(color: ConstHelper.blackColor,
-                  fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                                  fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
                               controller: txtWhatsappNo,
                               maxLength: 10,
                               validator: (value) {
@@ -499,7 +500,7 @@ class _EditprofilepageState extends State<Editprofilepage> {
                               },
                               textCapitalization: TextCapitalization.words,
                               decoration: InputDecoration(
-                                counterText: "",
+                                  counterText: "",
                                   isDense:true,
                                   hintStyle: TextStyle(color: ConstHelper.blackColor,
                                       fontWeight: FontWeight.normal,fontSize: Get.width*0.035),
@@ -529,14 +530,14 @@ class _EditprofilepageState extends State<Editprofilepage> {
                             style: TextStyle(
                               color: ConstHelper.blackColor,
                               fontWeight: FontWeight.w600,
-                               fontSize: Get.width * 0.04,
+                              fontSize: Get.width * 0.04,
                             ),
                           ),
                           Container(
                             height: 40,
                             child: TextFormField(
                               style: TextStyle(color: ConstHelper.blackColor,
-                  fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                                  fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
                               controller: txtReferenceMobileNo,
                               maxLength: 10,
                               validator: (value) {
@@ -576,7 +577,7 @@ class _EditprofilepageState extends State<Editprofilepage> {
                   style: TextStyle(
                     color: ConstHelper.blackColor,
                     fontWeight: FontWeight.w600,
-                     fontSize: Get.width * 0.04,
+                    fontSize: Get.width * 0.04,
                   ),
                 ),
                 SizedBox(
@@ -678,23 +679,23 @@ class _EditprofilepageState extends State<Editprofilepage> {
                         EasyLoading.show(status: ConstHelper.pleaseWaitMsg);
                         await Future.delayed(const Duration(milliseconds: 100));
                         value as Map;
-                          txtGotra.text ="";
-                          txtCommunity.text =value?["community_name"]??"";
-                          try {homeController
-                              .gotraDataListCommunityIdWise.clear();
-                            homeController.gotraDataListCommunityIdWise.value =
-                            await ApiHelper.apiHelper.getGotraDataListCommunityWise(
-                              comunityId: (value["id"]).toString(),
-                            );
-                          setState(() {});
-                          } catch (error) {
-                            homeController.gotraDataListCommunityIdWise.value = [];
-                            EasyLoading.dismiss();
-                            ConstHelper.errorDialog(
-                              text: ConstHelper.somethingErrorMsg,
-                              seconds: 10,
-                            );
-                          }
+                        txtGotra.text ="";
+                        txtCommunity.text =value?["community_name"]??"";
+                        try {homeController
+                            .gotraDataListCommunityIdWise.clear();
+                        homeController.gotraDataListCommunityIdWise.value =
+                        await ApiHelper.apiHelper.getGotraDataListCommunityWise(
+                          comunityId: (value["id"]).toString(),
+                        );
+                        setState(() {});
+                        } catch (error) {
+                          homeController.gotraDataListCommunityIdWise.value = [];
+                          EasyLoading.dismiss();
+                          ConstHelper.errorDialog(
+                            text: ConstHelper.somethingErrorMsg,
+                            seconds: 10,
+                          );
+                        }
                         EasyLoading.dismiss();
                       },
                       buttonStyleData: ButtonStyleData(
@@ -743,7 +744,7 @@ class _EditprofilepageState extends State<Editprofilepage> {
                   style: TextStyle(
                     color: ConstHelper.blackColor,
                     fontWeight: FontWeight.w600,
-                     fontSize: Get.width * 0.04,
+                    fontSize: Get.width * 0.04,
                   ),
                 ),
                 SizedBox(
@@ -910,7 +911,7 @@ class _EditprofilepageState extends State<Editprofilepage> {
                   style: TextStyle(
                     color: ConstHelper.blackColor,
                     fontWeight: FontWeight.w600,
-                     fontSize: Get.width * 0.04,
+                    fontSize: Get.width * 0.04,
                   ),
                 ),
                 SizedBox(
@@ -981,12 +982,12 @@ class _EditprofilepageState extends State<Editprofilepage> {
                   style: TextStyle(
                     color: ConstHelper.blackColor,
                     fontWeight: FontWeight.w600,
-                     fontSize: Get.width * 0.04,
+                    fontSize: Get.width * 0.04,
                   ),
                 ),
                 TextFormField(
                   style: TextStyle(color: ConstHelper.blackColor,
-                fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                      fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
                   controller: txtQualification,
                   validator: (value) {
                     if(value == null || value.trim().isEmpty)
@@ -1018,12 +1019,12 @@ class _EditprofilepageState extends State<Editprofilepage> {
                   style: TextStyle(
                     color: ConstHelper.blackColor,
                     fontWeight: FontWeight.w600,
-                     fontSize: Get.width * 0.04,
+                    fontSize: Get.width * 0.04,
                   ),
                 ),
                 TextFormField(
                   style: TextStyle(color: ConstHelper.blackColor,
-                fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                      fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
                   controller: txtOccupation,
                   validator: (value) {
                     if(value == null || value.trim().isEmpty)
@@ -1061,12 +1062,12 @@ class _EditprofilepageState extends State<Editprofilepage> {
                             style: TextStyle(
                               color: ConstHelper.blackColor,
                               fontWeight: FontWeight.w600,
-                               fontSize: Get.width * 0.04,
+                              fontSize: Get.width * 0.04,
                             ),
                           ),
                           TextFormField(
                             style: TextStyle(color: ConstHelper.blackColor,
-                                            fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                                fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
                             controller: txtReferenceName,
                             validator: (value) {
                               if(value == null || value.trim().isEmpty)
@@ -1105,12 +1106,12 @@ class _EditprofilepageState extends State<Editprofilepage> {
                             style: TextStyle(
                               color: ConstHelper.blackColor,
                               fontWeight: FontWeight.w600,
-                               fontSize: Get.width * 0.04,
+                              fontSize: Get.width * 0.04,
                             ),
                           ),
                           TextFormField(
                             style: TextStyle(color: ConstHelper.blackColor,
-                                            fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                                fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
                             controller: txtWorkingCity,
                             validator: (value) {
                               if(value == null || value.trim().isEmpty)
@@ -1147,12 +1148,12 @@ class _EditprofilepageState extends State<Editprofilepage> {
                   style: TextStyle(
                     color: ConstHelper.blackColor,
                     fontWeight: FontWeight.w600,
-                     fontSize: Get.width * 0.04,
+                    fontSize: Get.width * 0.04,
                   ),
                 ),
                 TextFormField(
                   style: TextStyle(color: ConstHelper.blackColor,
-                  fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                      fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
                   controller: txtAddress,
                   maxLines: 4,
                   maxLength: 250,
@@ -1186,12 +1187,12 @@ class _EditprofilepageState extends State<Editprofilepage> {
                   style: TextStyle(
                     color: ConstHelper.blackColor,
                     fontWeight: FontWeight.w600,
-                     fontSize: Get.width * 0.04,
+                    fontSize: Get.width * 0.04,
                   ),
                 ),
                 TextFormField(
                   style: TextStyle(color: ConstHelper.blackColor,
-                  fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
+                      fontWeight: FontWeight.w500,fontSize: Get.width*0.04),
                   controller: txtImportantNote,
                   maxLength: 500,
                   maxLines: 4,
@@ -1219,7 +1220,7 @@ class _EditprofilepageState extends State<Editprofilepage> {
                   ),
                 ),
                 SizedBox(height: Get.width/80,),
-              
+
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: Get.width/8,),
                   child: InkWell(
@@ -1239,9 +1240,9 @@ class _EditprofilepageState extends State<Editprofilepage> {
                           note: txtImportantNote.text,
                           permanent_address: txtAddress.text,
                           village_city: "").then((value) {
-                              Get.back();
-                              ConstHelper.successDialog(text: 'Profile Updated Successfully', seconds: 10,);
-                          },);
+                        Get.back();
+                        ConstHelper.successDialog(text: 'Profile Updated Successfully', seconds: 10,);
+                      },);
                       homeController.userData.value = (await ApiHelper.apiHelper.fetchProfile())!;
                     },
                     child: Container(
@@ -1269,6 +1270,6 @@ class _EditprofilepageState extends State<Editprofilepage> {
           ),
         ),
       ),
-    );
+    ));
   }
 }
