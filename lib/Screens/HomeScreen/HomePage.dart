@@ -1571,10 +1571,17 @@ class _HomePageState extends State<HomePage> {
                                                           ),
                                                           SizedBox(
                                                             width:
-                                                                Get.width / 30,
+                                                                Get.width / 50,
                                                           ),
                                                           Row(
-                                                            children: [
+                                                            
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        
+                                                      ),
+                                                      Row(children: [
                                                               Text(
                                                                 'EDU : ',
                                                                 style:
@@ -1612,10 +1619,7 @@ class _HomePageState extends State<HomePage> {
                                                                           0.035,
                                                                 ),
                                                               ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
+                                                            ],),
                                                       Row(
                                                         children: [
                                                           Text(
